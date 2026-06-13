@@ -107,8 +107,10 @@ if USE_MOCK:
 else:
     # Real Motor async client (local dev or MongoDB Atlas)
     from motor.motor_asyncio import AsyncIOMotorClient
-    client = AsyncIOMotorClient(config.MONGO_URL)
+    import certifi
+    client = AsyncIOMotorClient(config.MONGO_URL, tlsCAFile=certifi.where())
     db = client[config.DB_NAME]
+
 
 
 async def ensure_indexes() -> None:
