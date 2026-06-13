@@ -17,15 +17,21 @@ import { InsightsPanel } from "../components/InsightsPanel";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+/** Number of seed data points shown in the 14-day trend chart */
+const TREND_DAYS = 14;
+
 const TREND_DATA = (() => {
   const seed = [6.2,4.8,9.1,5.3,7.7,3.9,8.4,6.0,4.5,10.2,5.8,7.1,4.2,6.9];
   const today = new Date();
   return seed.map((kg, i) => {
     const d = new Date(today);
-    d.setDate(today.getDate() - (13 - i));
+    d.setDate(today.getDate() - (TREND_DAYS - 1 - i));
     return { label: d.toLocaleDateString("en",{month:"short",day:"numeric"}), kg };
   });
 })();
+
+/** Average weeks per calendar month — used to project weekly total to 30-day estimate */
+const MONTH_WEEKS = 4.2;
 
 const INITIAL_ACTIVITIES = [
   { id: "1", label: "Car (Petrol) — 25 km",  date: new Date().toISOString().slice(0, 10), value: 25,  unit: "km",   co2_kg: 5.25, category: "transport" },
@@ -88,14 +94,19 @@ function recordActivityDate(dateStr) {
 }
 
 /**
- * Derives dashboard stats from an activity list.
- * @param {typeof INITIAL_ACTIVITIES} activities
+ * Derives dashboard statistics from an activity log.
+ *
+ * @param {Array<{id: string, label: string, date: string, value: number, unit: string, co2_kg: number, category: string}>} activities
+ *   The full list of logged activities.
+ * @returns {{ today_kg: number, week_kg: number, month_kg: number, vs_global_pct: number,
+ *             streak: number, trees_to_offset_month: number,
+ *             category_breakdown: Array<{category: string, kg: number}> }}
  */
 function buildStats(activities) {
   const today     = new Date().toISOString().slice(0, 10);
   const todayKg   = +activities.filter(a => a.date === today).reduce((s, a) => s + a.co2_kg, 0).toFixed(1);
   const weekKg    = +activities.reduce((s, a) => s + a.co2_kg, 0).toFixed(1);
-  const monthKg   = +(weekKg * 4.2).toFixed(1);
+  const monthKg   = +(weekKg * MONTH_WEEKS).toFixed(1);
   const vsGlobal  = +((weekKg / GLOBAL_WEEKLY_AVG_KG) * 100).toFixed(0);
   const trees     = Math.max(1, Math.ceil(monthKg / CO2_PER_TREE_PER_YEAR_KG));
 

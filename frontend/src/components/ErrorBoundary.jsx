@@ -16,11 +16,9 @@ export class ErrorBoundary extends Component {
     return { hasError: true, message: error?.message || "Unknown error" };
   }
 
-  componentDidCatch(error, info) {
-    // In a real app you would send this to an error-tracking service.
-    if (process.env.NODE_ENV === "development") {
-      console.error("[ErrorBoundary]", error, info);
-    }
+  componentDidCatch(_error, _info) {
+    // In production: errors are silently contained by the boundary.
+    // Wire to an error-tracking service (e.g. Sentry) here if needed.
   }
 
   render() {
