@@ -1,14 +1,10 @@
 {
   "experimentalServices": {
     "frontend": {
-      "framework": "create-react-app",
-      "buildCommand": "npm run build",
-      "outputDirectory": "build",
-      "installCommand": "npm install"
+      "framework": "create-react-app"
     },
     "backend": {
-      "framework": "fastapi",
-      "installCommand": "pip install -r requirements-vercel.txt"
+      "framework": "fastapi"
     }
   }
 }
