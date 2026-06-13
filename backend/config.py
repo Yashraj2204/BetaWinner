@@ -11,7 +11,12 @@ from dotenv import load_dotenv
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-USE_MOCK_DB: bool = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
+_mongo_url = os.environ.get("MONGO_URL", "")
+_is_vercel = "VERCEL" in os.environ
+_has_local_mongo = not _mongo_url or "localhost" in _mongo_url or "127.0.0.1" in _mongo_url
+
+_default_mock = "true" if (_is_vercel and _has_local_mongo) else "false"
+USE_MOCK_DB: bool = os.environ.get("USE_MOCK_DB", _default_mock).lower() == "true"
 
 # --- Database (optional when USE_MOCK_DB=true) ---
 MONGO_URL: str = os.environ.get("MONGO_URL", "mongodb://localhost:27017")

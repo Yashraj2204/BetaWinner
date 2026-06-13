@@ -6,7 +6,16 @@ but the full API surface works — ideal for demos/Vercel deployments without At
 import os
 import config
 
-USE_MOCK = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
+_mongo_url = os.environ.get("MONGO_URL", "")
+_is_vercel = "VERCEL" in os.environ
+_has_local_mongo = not _mongo_url or "localhost" in _mongo_url or "127.0.0.1" in _mongo_url
+
+if os.environ.get("USE_MOCK_DB", "").lower() == "true":
+    USE_MOCK = True
+elif _is_vercel and _has_local_mongo:
+    USE_MOCK = True
+else:
+    USE_MOCK = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
 
 if USE_MOCK:
     # In-memory MongoDB — no external service needed (Vercel / CI / demo)
