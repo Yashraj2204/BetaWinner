@@ -62,3 +62,4 @@ yarn-error.log*
 # Build caches
 .cache/
 frontend/node_modules/.cache/
+memory/test_credentials.md

@@ -1,0 +1,44 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true,
+    "node": true
+  },
+  "extends": [
+    "react-app",
+    "react-app/jest"
+  ],
+  "plugins": [
+    "jsx-a11y",
+    "react-hooks"
+  ],
+  "rules": {
+    /* ── Code quality ───────────────────────────────── */
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+
+    /* ── React ──────────────────────────────────────── */
+    "react/prop-types": "warn",
+    "react/jsx-no-target-blank": "error",
+    "react/no-array-index-key": "warn",
+    "react/self-closing-comp": "warn",
+
+    /* ── React Hooks ────────────────────────────────── */
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    /* ── Accessibility ──────────────────────────────── */
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-role": "error",
+    "jsx-a11y/interactive-supports-focus": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn"
+  }
+}
