@@ -28,7 +28,7 @@ export default function Landing() {
             </span>
             <span className="font-heading font-extrabold text-lg tracking-tight">EcoTrace</span>
           </div>
-          <div className="flex items-center gap-3">
+          <nav aria-label="Main navigation" className="flex items-center gap-3">
             <Link
               to="/dashboard"
               data-testid="nav-get-started-button"
@@ -36,7 +36,7 @@ export default function Landing() {
             >
               Open App
             </Link>
-          </div>
+          </nav>
         </div>
       </header>
 

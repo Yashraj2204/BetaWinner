@@ -17,20 +17,15 @@ import { InsightsPanel } from "../components/InsightsPanel";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-/** Generates a plausible 14-day emission trend for the demo. */
-function makeTrend() {
+const TREND_DATA = (() => {
+  const seed = [6.2,4.8,9.1,5.3,7.7,3.9,8.4,6.0,4.5,10.2,5.8,7.1,4.2,6.9];
   const today = new Date();
-  return Array.from({ length: 14 }, (_, i) => {
+  return seed.map((kg, i) => {
     const d = new Date(today);
     d.setDate(today.getDate() - (13 - i));
-    return {
-      label: d.toLocaleDateString("en", { month: "short", day: "numeric" }),
-      kg:    +(Math.random() * 8 + 2).toFixed(1),
-    };
+    return { label: d.toLocaleDateString("en",{month:"short",day:"numeric"}), kg };
   });
-}
-
-const TREND_DATA = makeTrend();
+})();
 
 const INITIAL_ACTIVITIES = [
   { id: "1", label: "Car (Petrol) — 25 km",  date: new Date().toISOString().slice(0, 10), value: 25,  unit: "km",   co2_kg: 5.25, category: "transport" },
@@ -159,7 +154,10 @@ StatTile.propTypes = {
 
 /** Dashboard page — shows aggregated stats, charts and recent activities. */
 export default function Dashboard() {
-  const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
+  const [activities, setActivities] = useState(() => {
+    const saved = localStorage.getItem("ecotrace_activities");
+    return saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
+  });
 
   const data    = useMemo(() => buildStats(activities), [activities]);
   const pieData = useMemo(
@@ -168,7 +166,11 @@ export default function Dashboard() {
   );
 
   const deleteActivity = useCallback((id) => {
-    setActivities(prev => prev.filter(a => a.id !== id));
+    setActivities(prev => {
+      const updated = prev.filter(a => a.id !== id);
+      localStorage.setItem("ecotrace_activities", JSON.stringify(updated));
+      return updated;
+    });
     toast.success("Activity removed");
   }, []);
 
@@ -224,23 +226,25 @@ export default function Dashboard() {
             <h2 className="font-heading font-bold text-[#1A2E20]">14-day emission trend</h2>
             <span className="text-xs text-[#4A5A50]">kg CO₂ / day</span>
           </div>
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={TREND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#8BA888" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#8BA888" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} interval={2} />
-              <YAxis tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }}
-                formatter={(v) => [`${v} kg CO₂`, "Emissions"]}
-              />
-              <Area type="monotone" dataKey="kg" stroke="#2D5A3F" strokeWidth={2} fill="url(#trendFill)" animationDuration={900} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div role="img" aria-label="14-day CO₂ emission trend chart">
+            <ResponsiveContainer width="100%" height={240}>
+              <AreaChart data={TREND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stopColor="#8BA888" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#8BA888" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} interval={2} />
+                <YAxis tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }}
+                  formatter={(v) => [`${v} kg CO₂`, "Emissions"]}
+                />
+                <Area type="monotone" dataKey="kg" stroke="#2D5A3F" strokeWidth={2} fill="url(#trendFill)" animationDuration={900} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="bg-white border border-[#E5E2DA] rounded-lg p-6" data-testid="category-breakdown-chart">
@@ -249,16 +253,18 @@ export default function Dashboard() {
           </h2>
           {pieData.length ? (
             <>
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={75} paddingAngle={3} animationDuration={800}>
-                    {pieData.map((entry, i) => (
-                      <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }} formatter={(v) => [`${v} kg CO₂`]} />
-                </PieChart>
-              </ResponsiveContainer>
+              <div role="img" aria-label="Category breakdown donut chart showing emissions by transport, energy, food and shopping">
+                <ResponsiveContainer width="100%" height={170}>
+                  <PieChart>
+                    <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={75} paddingAngle={3} animationDuration={800}>
+                      {pieData.map((entry, i) => (
+                        <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }} formatter={(v) => [`${v} kg CO₂`]} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
               <ul className="space-y-2 mt-3 list-none" aria-label="Category breakdown">
                 {pieData.map((p, i) => (
                   <li key={p.name} className="flex items-center justify-between text-sm">

@@ -1,5 +1,7 @@
 # 🌿 EcoTrace — Carbon Footprint Awareness Platform
 
+![CI](https://github.com/Yashraj2204/BetaWinner/actions/workflows/test.yml/badge.svg)
+
 > **Hackathon Challenge:** Design a solution that helps individuals understand, track, and reduce their carbon footprint through simple actions and personalized insights.
 
 EcoTrace turns climate anxiety into clear, measurable daily action: log everyday activities, see exactly where your emissions come from, and get personalised tips to cut them — all running **100% in the browser, no account needed**.

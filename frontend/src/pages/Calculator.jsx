@@ -72,13 +72,25 @@ export default function Calculator() {
     }
     setSaving(true);
     setTimeout(() => {
-      const co2 = (n * info.factor).toFixed(2);
-      toast.success(`Logged ${info.label}: ${co2} kg CO₂`);
+      const STORAGE_KEY = "ecotrace_activities";
+      const newEntry = {
+        id: Date.now().toString(),
+        label: `${info.label} — ${n} ${info.unit}`,
+        date,
+        value: n,
+        unit: info.unit,
+        co2_kg: parseFloat((n * info.factor).toFixed(2)),
+        category,
+      };
+      const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([newEntry, ...prev]));
+
+      toast.success(`Logged ${info.label}: ${newEntry.co2_kg} kg CO₂`);
       setType(null);
       setValue("");
       setSaving(false);
     }, 500);
-  }, [type, value, info]);
+  }, [type, value, info, category, date]);
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto" data-testid="calculator-page">
