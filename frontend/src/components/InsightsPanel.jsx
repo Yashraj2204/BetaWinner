@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import PropTypes from "prop-types";
 
 /**
  * Static AI insight text shown in the InsightsPanel.
@@ -128,9 +127,7 @@ export const InsightsPanel = () => {
   );
 };
 
-InsightsPanel.propTypes = {
-  /** No required props — InsightsPanel is self-contained. */
-};
+// InsightsPanel takes no props — it is fully self-contained.
 
 // ── localStorage cleanup note ─────────────────────────────────────────────────
 // On startup the Dashboard prunes activity entries older than 90 days:
