@@ -2,6 +2,9 @@
 
 Brute-force protection: 5 failed logins per ip+email combination locks the
 account out of login for 15 minutes (tracked in the `login_attempts` collection).
+
+Tokens are returned BOTH as httpOnly cookies (for browser security) AND in the
+response body (for clients that prefer Bearer token / localStorage storage).
 """
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -37,8 +40,14 @@ async def register(body: RegisterIn, response: Response):
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.users.insert_one(user)
-    set_auth_cookies(response, create_access_token(user["_id"], email), create_refresh_token(user["_id"]))
-    return public_user(user)
+    access_token = create_access_token(user["_id"], email)
+    refresh_token = create_refresh_token(user["_id"])
+    set_auth_cookies(response, access_token, refresh_token)
+    return {
+        **public_user(user),
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+    }
 
 
 @router.post("/login")
@@ -62,8 +71,14 @@ async def login(body: LoginIn, request: Request, response: Response):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     await db.login_attempts.delete_one({"identifier": identifier})
-    set_auth_cookies(response, create_access_token(user["_id"], email), create_refresh_token(user["_id"]))
-    return public_user(user)
+    access_token = create_access_token(user["_id"], email)
+    refresh_token = create_refresh_token(user["_id"])
+    set_auth_cookies(response, access_token, refresh_token)
+    return {
+        **public_user(user),
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+    }
 
 
 @router.post("/logout")
@@ -80,15 +95,23 @@ async def me(request: Request):
 
 @router.post("/refresh")
 async def refresh(request: Request, response: Response):
+    # Accept refresh token from cookie OR request body
     token = request.cookies.get("refresh_token")
+    if not token:
+        try:
+            body = await request.json()
+            token = body.get("refresh_token")
+        except Exception:
+            pass
     if not token:
         raise HTTPException(status_code=401, detail="No refresh token")
     payload = decode_token(token, expected_type="refresh")
     user = await db.users.find_one({"_id": payload["sub"]})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    access_token = create_access_token(user["_id"], user["email"])
     response.set_cookie(
-        "access_token", create_access_token(user["_id"], user["email"]),
+        "access_token", access_token,
         httponly=True, secure=__import__("config").COOKIE_SECURE, samesite="lax", max_age=3600, path="/",
     )
-    return {"message": "refreshed"}
+    return {"message": "refreshed", "access_token": access_token}

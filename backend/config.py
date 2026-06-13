@@ -32,8 +32,21 @@ JWT_SECRET: str = os.environ.get(
 EMERGENT_LLM_KEY: str = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # --- Optional with safe defaults ---
-CORS_ORIGINS: list = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",") if o.strip()]
-COOKIE_SECURE: bool = os.environ.get("COOKIE_SECURE", "false").lower() == "true"
+_default_cors = (
+    "http://localhost:3000,"
+    "http://localhost:3001,"
+    "https://beta-winner.vercel.app,"
+    "https://footprint-hub-9.preview.emergentagent.com"
+)
+CORS_ORIGINS: list = [
+    o.strip()
+    for o in os.environ.get("CORS_ORIGINS", _default_cors).split(",")
+    if o.strip()
+]
+
+# On Vercel (HTTPS) cookies must be secure; locally they don't need to be
+COOKIE_SECURE: bool = os.environ.get("COOKIE_SECURE", "true" if _is_vercel else "false").lower() == "true"
+
 LLM_MODEL: str = os.environ.get("LLM_MODEL", "gpt-4o")
 ADMIN_EMAIL: str = os.environ.get("ADMIN_EMAIL", "admin@ecotrace.app")
 ADMIN_PASSWORD: str = os.environ.get("ADMIN_PASSWORD", "admin1234")

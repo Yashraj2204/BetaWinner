@@ -66,10 +66,12 @@ async def security_headers(request, call_next):
     return response
 
 
+_is_vercel = "VERCEL" in __import__("os").environ
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=config.CORS_ORIGINS,
+    # On Vercel allow all origins (preview URLs vary); credentials won't use wildcard so Bearer tokens are used
+    allow_origins=["*"] if _is_vercel else config.CORS_ORIGINS,
+    allow_credentials=False if _is_vercel else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
