@@ -40,6 +40,22 @@ api_router.include_router(insights.router)
 app.include_router(api_router)
 
 
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Unhandled runtime exception",
+            "exception": str(exc),
+            "traceback": traceback.format_exc()
+        }
+    )
+
+
+
 @app.middleware("http")
 async def security_headers(request, call_next):
     """Attach standard security headers to every response."""
