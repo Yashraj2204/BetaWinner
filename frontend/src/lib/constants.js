@@ -9,7 +9,15 @@
  * Global benchmark: ~4.7 t CO₂e / person / year  →  ~90 kg / week
  */
 
-/** kg CO₂e per unit for each activity type, grouped by category. */
+/**
+ * @typedef {{ label: string, factor: number, unit: string, source: string }} Activity
+ * @typedef {Record<string, Activity>} ActivityCategory
+ */
+
+/**
+ * kg CO₂e per unit for each activity type, grouped by category.
+ * @type {Record<string, ActivityCategory>}
+ */
 export const EMISSION_FACTORS = {
   transport: {
     car_petrol:   { label: "Car (Petrol)",     factor: 0.210, unit: "km",    source: "DEFRA 2023" },
@@ -47,7 +55,7 @@ export const EMISSION_FACTORS = {
   },
 };
 
-/** Weekly global average CO₂e in kg (World Bank / Our World in Data) */
+/** Weekly global average CO₂e in kg — World Bank / Our World in Data (~4.7 t/person/yr ÷ 52 weeks) */
 export const GLOBAL_WEEKLY_AVG_KG = 90;
 
 /** kg CO₂ absorbed by one mature tree per year (EPA estimate) */

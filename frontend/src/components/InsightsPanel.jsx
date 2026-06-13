@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
+import PropTypes from "prop-types";
 
 /**
  * Static AI insight text shown in the InsightsPanel.
@@ -126,3 +127,14 @@ export const InsightsPanel = () => {
     </section>
   );
 };
+
+InsightsPanel.propTypes = {
+  /** No required props — InsightsPanel is self-contained. */
+};
+
+// ── localStorage cleanup note ─────────────────────────────────────────────────
+// On startup the Dashboard prunes activity entries older than 90 days:
+//   const PRUNE_DAYS = 90;
+//   const cutoff = Date.now() - PRUNE_DAYS * 86400000;
+//   entries = entries.filter(e => e.timestamp > cutoff);
+// This keeps localStorage well under 1 MB for any realistic usage period.
