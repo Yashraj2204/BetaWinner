@@ -2,6 +2,7 @@ import sys
 import os
 import traceback
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
 # Satisfy Vercel's AST analyzer with a top-level definition
 app = FastAPI(title="EcoTrace Entry")
@@ -22,11 +23,14 @@ except Exception as err:
     
     @fallback_app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
     async def fallback_error_handler(path_name: str):
-        return {
-            "error": "Failed to initialize application in index.py",
-            "exception": error_message,
-            "traceback": error_traceback,
-            "sys_path": sys.path,
-            "files": os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) if os.path.exists(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) else []
-        }
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to initialize application in index.py",
+                "exception": error_message,
+                "traceback": error_traceback,
+                "sys_path": sys.path,
+                "files": os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) if os.path.exists(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) else []
+            }
+        )
     app = fallback_app
