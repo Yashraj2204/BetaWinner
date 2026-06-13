@@ -6,6 +6,10 @@
  * - Stubs browser APIs unavailable in jsdom
  */
 import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from "util";
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 // ── Browser API stubs ──────────────────────────────────────────────────────
 

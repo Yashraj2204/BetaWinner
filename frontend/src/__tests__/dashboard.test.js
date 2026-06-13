@@ -46,8 +46,8 @@ describe("buildStats — empty activities", () => {
 
 describe("buildStats — today-only activities", () => {
   const activities = [
-    { id: "a", date: TODAY, category: "transport", co2_kg: 5.25 },
-    { id: "b", date: TODAY, category: "food",      co2_kg: 8.10 },
+    { id: "a", date: TODAY, category: "transport", co2_kg: 5.3 },
+    { id: "b", date: TODAY, category: "food",      co2_kg: 8.1 },
   ];
   const stats = buildStats(activities);
 

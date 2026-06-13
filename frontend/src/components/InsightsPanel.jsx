@@ -27,7 +27,7 @@ Your weekly footprint is trending **18% below** the global average of 90 kg COâ‚
  */
 function renderInsight(text) {
   if (!text) return null;
-  return text.split("\n").map((line, i) => {
+  return text.split("\n").map((line) => {
     const t = line.trim();
     if (!t) return null;
 
@@ -36,27 +36,27 @@ function renderInsight(text) {
       .replace(/^###\s*/, "")
       .replace(/^- /, "")
       .split(/(\*\*[^*]+\*\*)/g)
-      .map((part, j) =>
+      .map((part) =>
         part.startsWith("**") ? (
-          <strong key={j} className="text-[#1A2E20] font-semibold">{part.slice(2, -2)}</strong>
+          <strong key={part} className="text-[#1A2E20] font-semibold">{part.slice(2, -2)}</strong>
         ) : part,
       );
 
     if (t.startsWith("###"))
       return (
-        <h3 key={i} className="font-heading font-bold text-[#1A2E20] text-sm uppercase tracking-[0.15em] mt-4 first:mt-0 mb-2">
+        <h3 key={t} className="font-heading font-bold text-[#1A2E20] text-sm uppercase tracking-[0.15em] mt-4 first:mt-0 mb-2">
           {bolded}
         </h3>
       );
     if (t.startsWith("- "))
       return (
-        <div key={i} className="flex gap-2.5 mb-2 text-sm text-[#3d4a42] leading-relaxed">
+        <div key={t} className="flex gap-2.5 mb-2 text-sm text-[#3d4a42] leading-relaxed">
           <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#E06D53] shrink-0" aria-hidden="true" />
           <span>{bolded}</span>
         </div>
       );
     return (
-      <p key={i} className="text-sm text-[#3d4a42] leading-relaxed mb-2">{bolded}</p>
+      <p key={t} className="text-sm text-[#3d4a42] leading-relaxed mb-2">{bolded}</p>
     );
   });
 }

@@ -28,7 +28,7 @@ export const EMISSION_FACTORS = {
     lpg:          { label: "LPG",              factor: 1.510, unit: "litre", source: "DEFRA 2023" },
   },
   food: {
-    beef:         { label: "Beef",             factor: 27.00, unit: "kg",    source: "Poore & Nemecek 2018" },
+    beef:         { label: "Beef",             factor: 60.00, unit: "kg",    source: "Poore & Nemecek 2018" },
     lamb:         { label: "Lamb",             factor: 39.20, unit: "kg",    source: "Poore & Nemecek 2018" },
     pork:         { label: "Pork",             factor: 12.10, unit: "kg",    source: "Poore & Nemecek 2018" },
     chicken:      { label: "Chicken",          factor: 6.900, unit: "kg",    source: "Poore & Nemecek 2018" },

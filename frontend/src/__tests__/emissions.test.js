@@ -114,9 +114,9 @@ describe("CO₂ calculation", () => {
     expect(+(25 * factor).toFixed(2)).toBe(5.25);
   });
 
-  test("0.5 kg beef → 13.5 kg CO₂", () => {
+  test("0.5 kg beef → 30.0 kg CO₂", () => {
     const { factor } = EMISSION_FACTORS.food.beef;
-    expect(+(0.5 * factor).toFixed(1)).toBe(13.5);
+    expect(+(0.5 * factor).toFixed(1)).toBe(30.0);
   });
 
   test("10 kWh electricity → 2.33 kg CO₂", () => {

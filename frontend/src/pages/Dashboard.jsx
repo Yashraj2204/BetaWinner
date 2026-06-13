@@ -41,6 +41,58 @@ const INITIAL_ACTIVITIES = [
 ];
 
 /**
+ * Calculate the current consecutive-day logging streak from localStorage.
+ * Reads the 'ecotrace_activity_dates' key, which stores a JSON array of
+ * ISO date strings (e.g. ["2026-06-13", "2026-06-12", ...]).
+ * Returns the number of consecutive days (counting backward from today)
+ * that have at least one log entry.
+ * @returns {number}
+ */
+function getStreak() {
+  try {
+    const raw = localStorage.getItem("ecotrace_activity_dates");
+    if (!raw) return 0;
+    const dates = JSON.parse(raw);
+    if (!Array.isArray(dates) || dates.length === 0) return 0;
+
+    const uniqueDates = new Set(dates);
+    let streak = 0;
+    const d = new Date();
+
+    for (let i = 0; i < 365; i++) {
+      const key = d.toISOString().slice(0, 10);
+      if (uniqueDates.has(key)) {
+        streak++;
+      } else {
+        break;
+      }
+      d.setDate(d.getDate() - 1);
+    }
+    return streak;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Persist a date to the localStorage activity log.
+ * Called every time an activity is present in the list.
+ * @param {string} dateStr — ISO date string
+ */
+function recordActivityDate(dateStr) {
+  try {
+    const raw = localStorage.getItem("ecotrace_activity_dates");
+    const dates = raw ? JSON.parse(raw) : [];
+    if (!dates.includes(dateStr)) {
+      dates.push(dateStr);
+      localStorage.setItem("ecotrace_activity_dates", JSON.stringify(dates));
+    }
+  } catch {
+    // silently fail — localStorage may be unavailable
+  }
+}
+
+/**
  * Derives dashboard stats from an activity list.
  * @param {typeof INITIAL_ACTIVITIES} activities
  */
@@ -52,6 +104,10 @@ function buildStats(activities) {
   const vsGlobal  = +((weekKg / GLOBAL_WEEKLY_AVG_KG) * 100).toFixed(0);
   const trees     = Math.max(1, Math.ceil(monthKg / CO2_PER_TREE_PER_YEAR_KG));
 
+  // Record all activity dates for streak calculation
+  activities.forEach(a => recordActivityDate(a.date));
+  const streak = getStreak();
+
   const catMap = {};
   activities.forEach(a => {
     catMap[a.category] = +(((catMap[a.category] || 0) + a.co2_kg).toFixed(2));
@@ -62,7 +118,7 @@ function buildStats(activities) {
     week_kg:               weekKg,
     month_kg:              monthKg,
     vs_global_pct:         vsGlobal,
-    streak:                5,
+    streak,
     trees_to_offset_month: trees,
     category_breakdown:    Object.entries(catMap).map(([cat, kg]) => ({ category: cat, kg })),
   };
@@ -196,8 +252,8 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height={170}>
                 <PieChart>
                   <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={75} paddingAngle={3} animationDuration={800}>
-                    {pieData.map((_, i) => (
-                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
+                    {pieData.map((entry, i) => (
+                      <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
                     ))}
                   </Pie>
                   <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }} formatter={(v) => [`${v} kg CO₂`]} />

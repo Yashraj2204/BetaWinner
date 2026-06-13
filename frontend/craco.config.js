@@ -60,6 +60,19 @@ let webpackConfig = {
   },
 };
 
+webpackConfig.jest = {
+  configure: (jestConfig) => {
+    jestConfig.moduleNameMapper = {
+      ...jestConfig.moduleNameMapper,
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js",
+      "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js",
+      "^react-router$": "<rootDir>/node_modules/react-router/dist/development/index.js",
+    };
+    return jestConfig;
+  },
+};
+
 webpackConfig.devServer = (devServerConfig) => {
   // Add health check endpoints if enabled
   if (config.enableHealthCheck && setupHealthEndpoints && healthPluginInstance) {

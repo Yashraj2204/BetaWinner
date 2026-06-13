@@ -54,7 +54,7 @@ export default function Landing() {
               <span className="text-[#E06D53]">Shrink</span> your footprint.
             </motion.h1>
             <motion.p variants={fade} initial="hidden" animate="show" custom={2}
-              className="text-base md:text-lg text-[#5C6B61] leading-relaxed mb-8 max-w-md">
+              className="text-base md:text-lg text-[#4A5A50] leading-relaxed mb-8 max-w-md">
               Track everyday actions, understand where your emissions come from, and get
               personalized steps to cut them — one small habit at a time.
             </motion.p>
@@ -67,7 +67,7 @@ export default function Landing() {
                 Start tracking free
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              <div className="flex items-center gap-2 text-sm text-[#5C6B61]">
+              <div className="flex items-center gap-2 text-sm text-[#4A5A50]">
                 <Flame className="w-4 h-4 text-[#E06D53]" /> Build your streak today
               </div>
             </motion.div>
@@ -80,8 +80,8 @@ export default function Landing() {
               className="rounded-2xl object-cover w-full h-[480px] border border-[#E5E2DA]"
             />
             <div className="absolute -bottom-6 -left-6 bg-white border border-[#E5E2DA] rounded-xl p-5 shadow-sm">
-              <p className="text-xs tracking-[0.2em] uppercase text-[#5C6B61] mb-1">Global avg / person</p>
-              <p className="font-heading text-3xl font-extrabold">12.9 kg <span className="text-base font-medium text-[#5C6B61]">CO₂ / day</span></p>
+              <p className="text-xs tracking-[0.2em] uppercase text-[#4A5A50] mb-1">Global avg / person</p>
+              <p className="font-heading text-3xl font-extrabold">12.9 kg <span className="text-base font-medium text-[#4A5A50]">CO₂ / day</span></p>
               <p className="text-xs text-[#2D5A3F] font-medium mt-1">Where do you stand?</p>
             </div>
           </motion.div>
@@ -95,10 +95,10 @@ export default function Landing() {
             ["4", "emission categories tracked"],
             ["26+", "activity types with real factors"],
             ["9", "achievements to unlock"],
-          ].map(([num, label], i) => (
-            <div key={i}>
+          ].map(([num, label]) => (
+            <div key={label}>
               <p className="font-heading text-3xl md:text-4xl font-extrabold text-[#1A2E20]">{num}</p>
-              <p className="text-sm text-[#5C6B61] mt-1">{label}</p>
+              <p className="text-sm text-[#4A5A50] mt-1">{label}</p>
             </div>
           ))}
         </div>
@@ -107,14 +107,14 @@ export default function Landing() {
       {/* Bento features */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.2em] uppercase text-[#5C6B61] mb-3">How it works</p>
+          <p className="text-xs tracking-[0.2em] uppercase text-[#4A5A50] mb-3">How it works</p>
           <h2 className="font-heading text-3xl md:text-4xl font-extrabold tracking-tight mb-12 max-w-lg">
             Everything you need to act on climate, personally.
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {FEATURES.map((f, i) => (
               <motion.div
-                key={i}
+                key={f.title}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -133,7 +133,7 @@ export default function Landing() {
                   <f.icon className="w-5 h-5" />
                 </span>
                 <h3 className="font-heading text-xl font-bold mb-2">{f.title}</h3>
-                <p className={`text-sm leading-relaxed ${f.dark ? "text-white/70" : "text-[#5C6B61]"}`}>{f.desc}</p>
+                <p className={`text-sm leading-relaxed ${f.dark ? "text-white/70" : "text-[#4A5A50]"}`}>{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -161,7 +161,7 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-[#E5E2DA] py-8 px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-[#5C6B61]">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-[#4A5A50]">
           <span className="flex items-center gap-2"><Leaf className="w-4 h-4 text-[#2D5A3F]" /> EcoTrace</span>
           <span>Built for the Carbon Footprint Awareness Challenge</span>
         </div>

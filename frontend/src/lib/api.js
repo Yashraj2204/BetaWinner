@@ -13,7 +13,7 @@ export { EMISSION_FACTORS, GLOBAL_WEEKLY_AVG_KG, CO2_PER_TREE_PER_YEAR_KG, CALC_
  * @returns {string}
  */
 export function formatApiErrorDetail(detail) {
-  if (detail == null) return "Something went wrong. Please try again.";
+  if (detail === null || detail === undefined) return "Something went wrong. Please try again.";
   if (typeof detail === "string") return detail;
   if (Array.isArray(detail))
     return detail

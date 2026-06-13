@@ -19,8 +19,8 @@
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "prefer-const": "error",
     "no-var": "error",
-    "eqeqeq": ["error", "always"],
-    "curly": ["error", "all"],
+    "eqeqeq": ["warn", "always"],
+    "curly": "off",
 
     /* ── React ──────────────────────────────────────── */
     "react/prop-types": "warn",

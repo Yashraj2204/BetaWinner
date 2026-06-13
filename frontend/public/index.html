@@ -53,19 +53,7 @@
     </script>
 
     <!-- Suppress harmless PerformanceServerTiming DataCloneErrors -->
-    <script>
-      window.addEventListener("error", function(e) {
-        if (
-          e.error instanceof DOMException &&
-          e.error.name === "DataCloneError" &&
-          e.message &&
-          e.message.includes("PerformanceServerTiming")
-        ) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-        }
-      }, true);
-    </script>
+    <script src="%PUBLIC_URL%/error-logger.js"></script>
   </head>
   <body>
     <noscript>
