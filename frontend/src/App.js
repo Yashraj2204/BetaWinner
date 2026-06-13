@@ -1,14 +1,11 @@
 import "@/App.css";
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
 
-// Route-level code splitting keeps the initial bundle small.
-const Landing = lazy(() => import("./pages/Landing"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Landing    = lazy(() => import("./pages/Landing"));
+const Dashboard  = lazy(() => import("./pages/Dashboard"));
 const Calculator = lazy(() => import("./pages/Calculator"));
 const Achievements = lazy(() => import("./pages/Achievements"));
 
@@ -18,29 +15,21 @@ const PageLoader = () => (
   </div>
 );
 
-function Protected({ children }) {
-  const { user } = useAuth();
-  if (user === null) return <PageLoader />;
-  if (user === false) return <Navigate to="/auth" replace />;
-  return <Layout>{children}</Layout>;
-}
-
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
-            <Route path="/log" element={<Protected><Calculator /></Protected>} />
-            <Route path="/achievements" element={<Protected><Achievements /></Protected>} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/log" element={<Layout><Calculator /></Layout>} />
+          <Route path="/achievements" element={<Layout><Achievements /></Layout>} />
+          {/* catch-all */}
+          <Route path="*" element={<Landing />} />
+        </Routes>
+      </Suspense>
       <Toaster position="top-right" richColors />
-    </AuthProvider>
+    </BrowserRouter>
   );
 }
 

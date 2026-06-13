@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import {
   Leaf, ArrowRight, Calculator, Sparkles, LineChart, Trophy, Flame, Globe2,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 
 const fade = {
   hidden: { opacity: 0, y: 24 },
@@ -18,9 +17,6 @@ const FEATURES = [
 ];
 
 export default function Landing() {
-  const { user } = useAuth();
-  const ctaLink = user && user !== false ? "/dashboard" : "/auth";
-
   return (
     <div className="min-h-screen bg-[#F9F8F6] text-[#1A2E20]">
       {/* Nav */}
@@ -33,15 +29,12 @@ export default function Landing() {
             <span className="font-heading font-extrabold text-lg tracking-tight">EcoTrace</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth" data-testid="nav-signin-link" className="text-sm font-medium text-[#5C6B61] hover:text-[#1A2E20] transition-colors hidden sm:block">
-              Sign in
-            </Link>
             <Link
-              to={ctaLink}
+              to="/dashboard"
               data-testid="nav-get-started-button"
               className="px-4 py-2 rounded-lg bg-[#1A2E20] text-white text-sm font-medium hover:bg-[#2D5A3F] transition-colors duration-200"
             >
-              Get started
+              Open App
             </Link>
           </div>
         </div>
@@ -63,11 +56,11 @@ export default function Landing() {
             <motion.p variants={fade} initial="hidden" animate="show" custom={2}
               className="text-base md:text-lg text-[#5C6B61] leading-relaxed mb-8 max-w-md">
               Track everyday actions, understand where your emissions come from, and get
-              AI-personalized steps to cut them — one small habit at a time.
+              personalized steps to cut them — one small habit at a time.
             </motion.p>
             <motion.div variants={fade} initial="hidden" animate="show" custom={3} className="flex items-center gap-4">
               <Link
-                to={ctaLink}
+                to="/dashboard"
                 data-testid="hero-cta-button"
                 className="group flex items-center gap-2 px-6 py-3.5 rounded-lg bg-[#E06D53] text-white font-semibold hover:bg-[#C95B42] transition-colors duration-200"
               >
@@ -158,11 +151,11 @@ export default function Landing() {
             Join EcoTrace and turn climate anxiety into clear, measurable daily action.
           </p>
           <Link
-            to={ctaLink}
+            to="/dashboard"
             data-testid="footer-cta-button"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[#E06D53] text-white font-semibold hover:bg-[#C95B42] transition-colors duration-200"
           >
-            Create free account <ArrowRight className="w-4 h-4" />
+            Open the app <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>

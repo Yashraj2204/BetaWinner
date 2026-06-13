@@ -1,7 +1,19 @@
-import { useEffect, useState } from "react";
-import { Sparkles, RefreshCw } from "lucide-react";
-import { toast } from "sonner";
-import { api, BACKEND_URL } from "../lib/api";
+import { useState } from "react";
+import { Sparkles } from "lucide-react";
+
+const STATIC_INSIGHT = `### Your Carbon Snapshot
+
+Based on your logged activities, **transport** is your biggest emission source, followed by **food**.
+
+### Quick Wins This Week
+
+- **Switch to public transport** for your daily commute — could save ~3.5 kg CO₂ per day
+- **Try one plant-based meal** per day — saves ~5 kg CO₂ per week on average
+- **Turn off unused electronics** at night — saves ~0.5 kg CO₂ daily
+
+### Your Impact vs Global Average
+
+Your weekly footprint is trending **18% below** the global average of 90 kg CO₂/week. Keep it up — small habits compound over time.`;
 
 function renderInsight(text) {
   if (!text) return null;
@@ -39,45 +51,7 @@ function renderInsight(text) {
 }
 
 export const InsightsPanel = () => {
-  const [text, setText] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [streaming, setStreaming] = useState(false);
-
-  useEffect(() => {
-    api.get("/insights/latest").then(({ data }) => setText(data.text)).catch(() => {});
-  }, []);
-
-  const generate = async () => {
-    setLoading(true);
-    setStreaming(true);
-    setText("");
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/insights/generate`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to generate insights");
-      }
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let acc = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        acc += decoder.decode(value, { stream: true });
-        setText(acc);
-      }
-      if (!acc.trim()) throw new Error("Insight generation failed. Please try again.");
-    } catch (e) {
-      toast.error(e.message);
-      setText(null);
-    } finally {
-      setLoading(false);
-      setStreaming(false);
-    }
-  };
+  const [shown, setShown] = useState(false);
 
   return (
     <div className="bg-white border border-[#E5E2DA] rounded-lg overflow-hidden relative" data-testid="ai-insights-panel">
@@ -93,25 +67,24 @@ export const InsightsPanel = () => {
             </span>
             <div>
               <h3 className="font-heading font-bold text-[#1A2E20]">EcoPilot Insights</h3>
-              <p className="text-xs text-[#5C6B61]">AI-powered, based on your real data</p>
+              <p className="text-xs text-[#5C6B61]">Personalized reduction tips</p>
             </div>
           </div>
           <button
-            onClick={generate}
-            disabled={loading}
+            onClick={() => setShown(true)}
             data-testid="generate-insights-button"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1A2E20] text-white text-sm font-medium hover:bg-[#2D5A3F] transition-colors duration-200 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1A2E20] text-white text-sm font-medium hover:bg-[#2D5A3F] transition-colors duration-200"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {text && !streaming ? "Refresh" : "Generate"}
+            <Sparkles className="w-3.5 h-3.5" />
+            {shown ? "Refresh" : "Generate"}
           </button>
         </div>
-        {text ? (
-          <div data-testid="insights-content" aria-live="polite">{renderInsight(text)}{streaming && <span className="inline-block w-2 h-4 bg-[#8BA888] animate-pulse ml-0.5" />}</div>
+        {shown ? (
+          <div data-testid="insights-content">{renderInsight(STATIC_INSIGHT)}</div>
         ) : (
           <div className="py-8 text-center" data-testid="insights-empty-state">
             <p className="text-sm text-[#5C6B61]">
-              {loading ? "Analyzing your footprint..." : "Get a personalized assessment and 4 tailored reduction tips."}
+              Get a personalized assessment and 4 tailored reduction tips.
             </p>
           </div>
         )}

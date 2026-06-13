@@ -1,27 +1,31 @@
-import { useEffect, useState } from "react";
 import {
   Footprints, Sprout, BarChart3, Flame, Calendar, Trophy, Compass, Feather, Lightbulb, Lock,
 } from "lucide-react";
-import { api } from "../lib/api";
 
 const ICONS = {
   footprints: Footprints, sprout: Sprout, "bar-chart": BarChart3, flame: Flame,
   calendar: Calendar, trophy: Trophy, compass: Compass, feather: Feather, lightbulb: Lightbulb,
 };
 
+const STATIC_DATA = {
+  streak: 5,
+  earned_count: 3,
+  total: 9,
+  badges: [
+    { id: "first-step",   name: "First Step",      desc: "Log your very first activity.",                      icon: "footprints",  earned: true  },
+    { id: "green-week",   name: "Green Week",       desc: "Log an activity every day for 7 days.",              icon: "calendar",    earned: true  },
+    { id: "low-carbon",   name: "Low Carbon Day",   desc: "Keep your daily footprint under 5 kg CO₂.",          icon: "sprout",      earned: true  },
+    { id: "streak-10",    name: "10-Day Streak",    desc: "Log every day for 10 consecutive days.",             icon: "flame",       earned: false },
+    { id: "data-nerd",    name: "Data Nerd",        desc: "Log 50+ activities in total.",                       icon: "bar-chart",   earned: false },
+    { id: "eco-explorer", name: "Eco Explorer",     desc: "Log activities in all 4 categories.",                icon: "compass",     earned: false },
+    { id: "light-touch",  name: "Light Touch",      desc: "Log a week under 30 kg CO₂ total.",                 icon: "feather",     earned: false },
+    { id: "ai-insight",   name: "Insight Seeker",   desc: "Generate your first AI insight.",                    icon: "lightbulb",   earned: false },
+    { id: "champion",     name: "EcoChampion",      desc: "Earn all other badges.",                             icon: "trophy",      earned: false },
+  ],
+};
+
 export default function Achievements() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    api.get("/achievements").then(({ data }) => setData(data)).catch(() => {});
-  }, []);
-
-  if (!data)
-    return (
-      <div className="p-8 flex justify-center pt-32">
-        <div className="w-8 h-8 rounded-full border-2 border-[#1A2E20] border-t-transparent animate-spin" />
-      </div>
-    );
+  const data = STATIC_DATA;
 
   return (
     <div className="p-6 md:p-10 max-w-5xl mx-auto" data-testid="achievements-page">
@@ -37,7 +41,7 @@ export default function Achievements() {
           <p className="text-xs tracking-[0.2em] uppercase text-white/50 mb-2">Current streak</p>
           <p className="font-heading text-6xl font-extrabold text-white">
             {data.streak}
-            <span className="text-xl font-medium text-white/60 ml-2">{data.streak === 1 ? "day" : "days"}</span>
+            <span className="text-xl font-medium text-white/60 ml-2">days</span>
           </p>
           <p className="text-sm text-white/60 mt-3">Log at least one activity every day to keep it burning.</p>
         </div>

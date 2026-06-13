@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Car, Bus, TrainFront, Plane, Bike, Footprints, Zap, Flame, Droplet, Cylinder,
@@ -6,13 +6,13 @@ import {
   BookOpen, Package, ShoppingBasket, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { api, formatApiErrorDetail } from "../lib/api";
+import { EMISSION_FACTORS } from "../lib/api";
 
 const CATEGORIES = [
   { id: "transport", label: "Transport", icon: Car },
-  { id: "energy", label: "Energy", icon: Zap },
-  { id: "food", label: "Food", icon: Salad },
-  { id: "shopping", label: "Shopping", icon: ShoppingBasket },
+  { id: "energy",    label: "Energy",    icon: Zap },
+  { id: "food",      label: "Food",      icon: Salad },
+  { id: "shopping",  label: "Shopping",  icon: ShoppingBasket },
 ];
 
 const TYPE_ICONS = {
@@ -26,7 +26,6 @@ const TYPE_ICONS = {
 };
 
 export default function Calculator() {
-  const [factors, setFactors] = useState(null);
   const [category, setCategory] = useState("transport");
   const [type, setType] = useState(null);
   const [value, setValue] = useState("");
@@ -34,45 +33,30 @@ export default function Calculator() {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    api.get("/emission-factors").then(({ data }) => setFactors(data)).catch(() => {});
-  }, []);
-
   const selectCategory = (id) => {
     setCategory(id);
     setType(null);
     setValue("");
   };
 
-  const info = factors && type ? factors[category][type] : null;
+  const factors = EMISSION_FACTORS;
+  const info = type ? factors[category][type] : null;
   const preview = info && value > 0 ? (value * info.factor).toFixed(2) : null;
 
-  const submit = async () => {
+  const submit = () => {
     if (!type || !value || value <= 0) {
       toast.error("Pick an activity and enter a value");
       return;
     }
     setSaving(true);
-    try {
-      const { data } = await api.post("/activities", {
-        category, activity_type: type, value: parseFloat(value), date,
-      });
-      toast.success(`Logged ${data.label}: ${data.co2_kg.toFixed(2)} kg CO₂`);
+    setTimeout(() => {
+      const co2 = (value * info.factor).toFixed(2);
+      toast.success(`Logged ${info.label}: ${co2} kg CO₂`);
       setType(null);
       setValue("");
-    } catch (err) {
-      toast.error(formatApiErrorDetail(err.response?.data?.detail) || "Failed to log activity");
-    } finally {
       setSaving(false);
-    }
+    }, 600);
   };
-
-  if (!factors)
-    return (
-      <div className="p-8 flex justify-center pt-32">
-        <div className="w-8 h-8 rounded-full border-2 border-[#1A2E20] border-t-transparent animate-spin" />
-      </div>
-    );
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto" data-testid="calculator-page">

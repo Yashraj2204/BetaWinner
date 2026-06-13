@@ -1,22 +1,14 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Leaf, LayoutDashboard, PlusCircle, Trophy, LogOut } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { Link, useLocation } from "react-router-dom";
+import { Leaf, LayoutDashboard, PlusCircle, Trophy } from "lucide-react";
 
 const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, testId: "nav-dashboard" },
-  { to: "/log", label: "Log Activity", icon: PlusCircle, testId: "nav-log-activity" },
-  { to: "/achievements", label: "Achievements", icon: Trophy, testId: "nav-achievements" },
+  { to: "/dashboard",    label: "Dashboard",    icon: LayoutDashboard, testId: "nav-dashboard" },
+  { to: "/log",          label: "Log Activity", icon: PlusCircle,      testId: "nav-log-activity" },
+  { to: "/achievements", label: "Achievements", icon: Trophy,          testId: "nav-achievements" },
 ];
 
 export const Layout = ({ children }) => {
-  const { user, logout } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/auth");
-  };
 
   return (
     <div className="min-h-screen bg-[#F9F8F6] flex">
@@ -26,9 +18,10 @@ export const Layout = ({ children }) => {
       >
         Skip to main content
       </a>
-      {/* Sidebar - desktop */}
+
+      {/* Sidebar — desktop */}
       <aside className="hidden md:flex flex-col w-60 border-r border-[#E5E2DA] bg-white fixed inset-y-0">
-        <Link to="/dashboard" className="flex items-center gap-2.5 px-6 h-16 border-b border-[#E5E2DA]" data-testid="sidebar-logo">
+        <Link to="/" className="flex items-center gap-2.5 px-6 h-16 border-b border-[#E5E2DA]" data-testid="sidebar-logo">
           <span className="w-8 h-8 rounded-lg bg-[#1A2E20] flex items-center justify-center">
             <Leaf className="w-4 h-4 text-[#8BA888]" />
           </span>
@@ -54,37 +47,20 @@ export const Layout = ({ children }) => {
             );
           })}
         </nav>
-        <div className="px-3 py-4 border-t border-[#E5E2DA]">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-[#8BA888] flex items-center justify-center text-white text-sm font-bold" data-testid="user-avatar">
-              {user?.name?.[0]?.toUpperCase() || "U"}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-[#1A2E20] truncate" data-testid="user-name">{user?.name}</p>
-              <p className="text-xs text-[#5C6B61] truncate">{user?.email}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            data-testid="logout-button"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#5C6B61] hover:bg-[#F9F8F6] hover:text-[#E06D53] transition-colors duration-200"
-          >
-            <LogOut className="w-4 h-4" /> Sign out
-          </button>
+        <div className="px-6 py-4 border-t border-[#E5E2DA]">
+          <p className="text-xs text-[#5C6B61]">No login required</p>
+          <p className="text-xs text-[#8BA888] font-semibold mt-0.5">Free to use · No account needed</p>
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 z-40 bg-white border-b border-[#E5E2DA] flex items-center justify-between px-4 h-14">
-        <Link to="/dashboard" className="flex items-center gap-2">
+      <div className="md:hidden fixed top-0 inset-x-0 z-40 bg-white border-b border-[#E5E2DA] flex items-center px-4 h-14">
+        <Link to="/" className="flex items-center gap-2">
           <span className="w-7 h-7 rounded-lg bg-[#1A2E20] flex items-center justify-center">
             <Leaf className="w-3.5 h-3.5 text-[#8BA888]" />
           </span>
           <span className="font-heading font-extrabold text-[#1A2E20]">EcoTrace</span>
         </Link>
-        <button onClick={handleLogout} data-testid="logout-button-mobile" aria-label="Sign out" className="text-[#5C6B61]">
-          <LogOut className="w-5 h-5" />
-        </button>
       </div>
 
       {/* Mobile bottom nav */}
