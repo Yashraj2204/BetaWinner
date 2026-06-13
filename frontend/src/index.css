@@ -1,0 +1,95 @@
+@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: "Figtree", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f9f8f6;
+    color: #1a2e20;
+}
+
+h1, h2, h3, h4, .font-heading {
+    font-family: "Cabinet Grotesk", sans-serif;
+}
+
+::selection {
+    background: #8ba888;
+    color: #fff;
+}
+
+@layer base {
+    :root {
+        --background: 40 20% 97%;
+        --foreground: 138 28% 14%;
+        --card: 0 0% 100%;
+        --card-foreground: 138 28% 14%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 138 28% 14%;
+        --primary: 138 28% 14%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 113 16% 60%;
+        --secondary-foreground: 138 28% 14%;
+        --muted: 40 18% 92%;
+        --muted-foreground: 135 8% 39%;
+        --accent: 11 70% 60%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 43 18% 87%;
+        --input: 43 18% 87%;
+        --ring: 113 16% 60%;
+        --chart-1: 138 28% 14%;
+        --chart-2: 113 16% 60%;
+        --chart-3: 11 70% 60%;
+        --chart-4: 36 64% 57%;
+        --chart-5: 137 10% 78%;
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+
+    [data-debug-wrapper="true"] > * {
+        margin-left: inherit;
+        margin-right: inherit;
+        margin-top: inherit;
+        margin-bottom: inherit;
+        padding-left: inherit;
+        padding-right: inherit;
+        padding-top: inherit;
+        padding-bottom: inherit;
+        column-gap: inherit;
+        row-gap: inherit;
+        gap: inherit;
+        border-left-width: inherit;
+        border-right-width: inherit;
+        border-top-width: inherit;
+        border-bottom-width: inherit;
+        border-left-style: inherit;
+        border-right-style: inherit;
+        border-top-style: inherit;
+        border-bottom-style: inherit;
+        border-left-color: inherit;
+        border-right-color: inherit;
+        border-top-color: inherit;
+        border-bottom-color: inherit;
+    }
+}
