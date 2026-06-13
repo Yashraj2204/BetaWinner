@@ -108,7 +108,26 @@ else:
     # Real Motor async client (local dev or MongoDB Atlas)
     from motor.motor_asyncio import AsyncIOMotorClient
     import certifi
-    client = AsyncIOMotorClient(config.MONGO_URL, tlsCAFile=certifi.where())
+
+    # Vercel's Amazon Linux has an OpenSSL version that triggers
+    # TLSV1_ALERT_INTERNAL_ERROR with MongoDB Atlas's TLS handshake.
+    # Using tlsAllowInvalidCertificates=True works around this.
+    # We also set a short serverSelectionTimeoutMS so errors are reported
+    # immediately rather than timing out after 30 seconds.
+    _is_vercel_env = "VERCEL" in __import__("os").environ
+    _mongo_kwargs = {
+        "serverSelectionTimeoutMS": 8000,
+        "connectTimeoutMS": 8000,
+        "socketTimeoutMS": 8000,
+    }
+    if _is_vercel_env:
+        # Bypass SSL cert verification on Vercel — necessary due to OpenSSL version mismatch
+        _mongo_kwargs["tls"] = True
+        _mongo_kwargs["tlsAllowInvalidCertificates"] = True
+    else:
+        _mongo_kwargs["tlsCAFile"] = certifi.where()
+
+    client = AsyncIOMotorClient(config.MONGO_URL, **_mongo_kwargs)
     db = client[config.DB_NAME]
 
 
