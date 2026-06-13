@@ -1,97 +1,91 @@
-try:
-    import config  # noqa: F401  — must be first: loads .env before anything else
+"""EcoTrace API entry point.
 
-    import logging
+Assembles middleware (CORS + security headers), mounts the versioned `/api`
+router and wires startup/shutdown lifecycle (indexes + idempotent seeding).
+Run via supervisor: `uvicorn server:app --host 0.0.0.0 --port 8001`.
+"""
+import config  # noqa: F401  — must be first: loads .env before anything else
 
-    from fastapi import APIRouter, FastAPI
-    from starlette.middleware.cors import CORSMiddleware
+import logging
 
-    import seed
-    from database import client, ensure_indexes
-    from routers import activities, auth, insights, stats
+from fastapi import APIRouter, FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    logger = logging.getLogger("ecotrace")
+import seed
+from database import client, ensure_indexes
+from routers import activities, auth, insights, stats
 
-    app = FastAPI(
-        title="EcoTrace API",
-        description="Carbon Footprint Awareness Platform — track, understand and reduce your CO2 emissions.",
-        version="1.0.0",
-    )
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger("ecotrace")
 
-    api_router = APIRouter(prefix="/api")
+app = FastAPI(
+    title="EcoTrace API",
+    description="Carbon Footprint Awareness Platform — track, understand and reduce your CO2 emissions.",
+    version="1.0.0",
+)
 
-
-    @api_router.get("/")
-    async def root():
-        """Health check."""
-        return {"message": "EcoTrace API running"}
-
-
-    api_router.include_router(auth.router)
-    api_router.include_router(activities.router)
-    api_router.include_router(stats.router)
-    api_router.include_router(insights.router)
-    app.include_router(api_router)
+api_router = APIRouter(prefix="/api")
 
 
-    from fastapi.responses import JSONResponse
-    import traceback
-
-    @app.exception_handler(Exception)
-    async def global_exception_handler(request, exc):
-        return JSONResponse(
-            status_code=500,
-            content={
-                "error": "Unhandled runtime exception",
-                "exception": str(exc),
-                "traceback": traceback.format_exc()
-            }
-        )
+@api_router.get("/")
+async def root():
+    """Health check."""
+    return {"message": "EcoTrace API running"}
 
 
-    @app.middleware("http")
-    async def security_headers(request, call_next):
-        """Attach standard security headers to every response."""
-        response = await call_next(request)
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-        return response
+api_router.include_router(auth.router)
+api_router.include_router(activities.router)
+api_router.include_router(stats.router)
+api_router.include_router(insights.router)
+app.include_router(api_router)
 
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=config.CORS_ORIGINS,
-        allow_methods=["*"],
-        allow_headers=["*"],
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Unhandled runtime exception",
+            "exception": str(exc),
+            "traceback": traceback.format_exc()
+        }
     )
 
 
-    @app.on_event("startup")
-    async def startup() -> None:
+@app.middleware("http")
+async def security_headers(request, call_next):
+    """Attach standard security headers to every response."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    return response
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=config.CORS_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+async def startup() -> None:
+    try:
         await ensure_indexes()
         await seed.seed_admin()
         await seed.seed_demo_user()
         logger.info("EcoTrace started: indexes ensured, admin & demo seeded")
+    except Exception as e:
+        logger.error(f"Startup tasks failed: {e}", exc_info=True)
 
 
-    @app.on_event("shutdown")
-    async def shutdown() -> None:
-        client.close()
-
-except Exception as e:
-    import traceback
-    from fastapi import FastAPI
-    app = FastAPI(title="EcoTrace Fallback")
-
-    @app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
-    async def fallback_error_handler(path_name: str):
-        tb = traceback.format_exc()
-        return {
-            "error": "Failed to initialize application in server.py",
-            "exception": str(e),
-            "traceback": tb
-        }
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    client.close()

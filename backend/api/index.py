@@ -1,10 +1,29 @@
-"""Vercel serverless entrypoint — imports the FastAPI app from the parent package."""
 import sys
 import os
+import traceback
+from fastapi import FastAPI
+
+# Satisfy Vercel's AST analyzer with a top-level definition
+app = FastAPI(title="EcoTrace Entry")
 
 # Make backend root importable
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from server import app  # noqa: F401  – Vercel picks up `app`
-
-
+try:
+    from server import app as real_app
+    app = real_app
+except Exception as e:
+    # Overwrite with fallback app if real app fails to load
+    fallback_app = FastAPI(title="EcoTrace Fallback")
+    
+    @fallback_app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
+    async def fallback_error_handler(path_name: str):
+        tb = traceback.format_exc()
+        return {
+            "error": "Failed to initialize application in index.py",
+            "exception": str(e),
+            "traceback": tb,
+            "sys_path": sys.path,
+            "files": os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) if os.path.exists(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) else []
+        }
+    app = fallback_app
