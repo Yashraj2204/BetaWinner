@@ -5,7 +5,7 @@
 ## 🔗 [**Live Demo → beta-winner.vercel.app**](https://beta-winner.vercel.app)
 
 [![CI](https://github.com/Yashraj2204/BetaWinner/actions/workflows/test.yml/badge.svg)](https://github.com/Yashraj2204/BetaWinner/actions/workflows/test.yml)
-![Tests](https://img.shields.io/badge/tests-66%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-102%20passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-80%25%2B-brightgreen)
 ![Security](https://img.shields.io/badge/security-9%20headers-blue)
 
@@ -28,6 +28,23 @@ EcoTrace runs **100% in the browser** — no account, no backend, no sign-up fri
 | **No login required** | Fully static — zero backend, zero sign-up friction. |
 
 ---
+
+## 🎯 Problem Statement Alignment Matrix
+
+| Hackathon Requirement | Our Implementation | Core File Reference |
+|:---|:---|:---|
+| Track individual carbon footprint | Activity log persisted to localStorage; today/week/month KPI tiles | [`Dashboard.jsx`](frontend/src/pages/Dashboard.jsx) |
+| Calculate emissions from daily activities | 26 activity types × science-backed CO₂ factors; live preview before logging | [`Calculator.jsx`](frontend/src/pages/Calculator.jsx) |
+| Emission factor data accuracy | UK DEFRA/BEIS 2023 (transport/energy) + Poore & Nemecek 2018 (food) | [`constants.js`](frontend/src/lib/constants.js) |
+| Personalised reduction insights | EcoPilot Insights panel with category-level tips and savings estimates | [`InsightsPanel.jsx`](frontend/src/components/InsightsPanel.jsx) |
+| Visual data representation | 14-day area trend chart + category donut chart (Recharts) | [`Dashboard.jsx`](frontend/src/pages/Dashboard.jsx) |
+| Habit-building / engagement | 9 achievement badges + consecutive-day logging streak from real dates | [`Achievements.jsx`](frontend/src/pages/Achievements.jsx) |
+| Accessible UX (WCAG 2.1 AA) | Semantic HTML, skip nav, `aria-*`, 5.1:1 contrast, focus rings | [`Layout.jsx`](frontend/src/components/Layout.jsx) |
+| Secure data handling | 9 HTTP security headers via Vercel (CSP, HSTS, COOP, frame-ancestors) | [`vercel.json`](vercel.json) |
+| No account / frictionless onboarding | 100% static SPA — open app, start logging immediately | [`App.js`](frontend/src/App.js) |
+| Global benchmark comparison | Weekly total vs 90 kg/week world average (World Bank / OWID) | [`constants.js`](frontend/src/lib/constants.js) |
+
+
 
 ## ⚡ Lighthouse Scores
 
@@ -115,16 +132,17 @@ cd frontend
 npm test -- --watchAll=false --verbose
 ```
 
-**66 tests across 6 suites — all passing:**
+**102 tests across 7 suites — all passing:**
 
 | Suite | Tests | Coverage area |
 |---|---|---|
+| `edge_cases.test.js` | 36 | Null/undefined, zero/negative, boundaries, Infinity/NaN, multi-shape API errors |
 | `emissions.test.js` | 30 | Data structure, numeric accuracy (DEFRA/Poore), CO₂ math, global constants |
-| `dashboard.test.js` | 15 | `buildStats()` — empty state, today-only, mixed dates, vs_global_pct, trees |
 | `interactions.test.js` | 21 | Calculator flow, InsightsPanel, Achievements, Dashboard delete, error utils |
+| `dashboard.test.js` | 15 | `buildStats()` — empty state, today-only, mixed dates, vs_global_pct, trees |
 | `App.test.js` | 9 | App renders, brand, h1, ErrorBoundary, route-level integration (/log, /achievements, /dashboard) |
-| `layout.test.js` | 1 | Layout + nav highlighting |
 | `utils.test.js` | 3 | cn() utility merging |
+| `layout.test.js` | 1 | Layout + nav highlighting |
 
 Coverage thresholds enforced: **80% lines, 80% statements, 70% branches, 70% functions**.
 

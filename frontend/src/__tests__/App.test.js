@@ -7,6 +7,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
+import App from "../App";
 
 // Stub IntersectionObserver (not available in jsdom)
 global.IntersectionObserver = class {
@@ -21,8 +22,6 @@ global.ResizeObserver = class {
   unobserve()  {}
   disconnect() {}
 };
-
-import App from "../App";
 
 describe("App — smoke tests", () => {
   test("renders without crashing", () => {
@@ -42,8 +41,8 @@ describe("App — smoke tests", () => {
 
   test("has a navigation landmark", () => {
     render(<App />);
-    // landing page has no nav, but the page should still mount
-    expect(document.getElementById("root") || document.body).toBeTruthy();
+    // Verify document body has content rendered
+    expect(screen.getByRole("banner", { hidden: true }) || document.body).toBeInTheDocument();
   });
 });
 
@@ -51,12 +50,12 @@ describe("ErrorBoundary", () => {
   const { ErrorBoundary } = require("../components/ErrorBoundary");
 
   test("renders children when no error", () => {
-    const { getByText } = render(
+    render(
       <ErrorBoundary>
         <p>All good</p>
       </ErrorBoundary>,
     );
-    expect(getByText("All good")).toBeInTheDocument();
+    expect(screen.getByText("All good")).toBeInTheDocument();
   });
 
   test("renders fallback UI when a child throws", () => {
@@ -64,13 +63,13 @@ describe("ErrorBoundary", () => {
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     const Bomb = () => { throw new Error("Test crash"); };
-    const { getByRole } = render(
+    render(
       <ErrorBoundary>
         <Bomb />
       </ErrorBoundary>,
     );
-    expect(getByRole("alert")).toBeInTheDocument();
-    expect(getByRole("button", { name: /refresh/i })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /refresh/i })).toBeInTheDocument();
 
     spy.mockRestore();
   });

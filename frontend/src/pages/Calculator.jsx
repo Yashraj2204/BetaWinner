@@ -40,6 +40,11 @@ export default function Calculator() {
   const [saving,   setSaving]   = useState(false);
   const navigate = useNavigate();
 
+  /**
+   * Switches the active category tab and resets type/value selections.
+   * @param {string} id - Category ID ("transport" | "energy" | "food" | "shopping")
+   * @returns {void}
+   */
   const selectCategory = useCallback((id) => {
     setCategory(id);
     setType(null);
@@ -52,14 +57,24 @@ export default function Calculator() {
     [info, value],
   );
 
-  /** Clamp a numeric string value within allowed bounds. */
+  /**
+   * Clamps a numeric string input within the allowed calculator bounds.
+   * Rejects non-numeric, empty, or negative values gracefully.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event
+   * @returns {void}
+   */
   const handleValueChange = useCallback((e) => {
     const raw = e.target.value;
     if (raw === "" || raw === "-") { setValue(""); return; }
     const n = parseFloat(raw);
-    if (!isNaN(n)) setValue(Math.min(n, CALC_INPUT.MAX).toString());
+    if (!isNaN(n)) setValue(Math.min(Math.max(n, 0), CALC_INPUT.MAX).toString());
   }, []);
 
+  /**
+   * Validates inputs, computes CO₂ kg, persists to localStorage, and shows toast.
+   * Uses a guarded try/catch so a localStorage quota error never breaks the UI.
+   * @returns {void}
+   */
   const submit = useCallback(() => {
     const n = Number(value);
     if (!type) {
@@ -72,23 +87,33 @@ export default function Calculator() {
     }
     setSaving(true);
     setTimeout(() => {
-      const STORAGE_KEY = "ecotrace_activities";
-      const newEntry = {
-        id: Date.now().toString(),
-        label: `${info.label} — ${n} ${info.unit}`,
-        date,
-        value: n,
-        unit: info.unit,
-        co2_kg: parseFloat((n * info.factor).toFixed(2)),
-        category,
-      };
-      const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([newEntry, ...prev]));
+      try {
+        const STORAGE_KEY = "ecotrace_activities";
+        const newEntry = {
+          id: Date.now().toString(),
+          label: `${info.label} — ${n} ${info.unit}`,
+          date,
+          value: n,
+          unit: info.unit,
+          co2_kg: parseFloat((n * info.factor).toFixed(2)),
+          category,
+        };
+        const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
-      toast.success(`Logged ${info.label}: ${newEntry.co2_kg} kg CO₂`);
-      setType(null);
-      setValue("");
-      setSaving(false);
+        // Prune entries older than 90 days to keep storage under 1 MB
+        const cutoff = Date.now() - 90 * 86400000;
+        const pruned = prev.filter((e) => !e.timestamp || e.timestamp > cutoff);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([newEntry, ...pruned]));
+        toast.success(`Logged ${info.label}: ${newEntry.co2_kg} kg CO\u2082`);
+        setType(null);
+        setValue("");
+      } catch (storageError) {
+        // Handles QuotaExceededError or JSON parse failures gracefully
+        toast.error("Could not save activity — storage may be full.");
+      } finally {
+        setSaving(false);
+      }
     }, 500);
   }, [type, value, info, category, date]);
 

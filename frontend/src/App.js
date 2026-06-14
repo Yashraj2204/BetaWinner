@@ -24,6 +24,11 @@ const PageLoader = () => (
   </div>
 );
 
+/**
+ * Main application component.
+ * Configures the router, routes lazy-loaded pages, and provides global toaster alerts.
+ * @returns {JSX.Element} The rendered React application.
+ */
 function App() {
   return (
     <BrowserRouter>

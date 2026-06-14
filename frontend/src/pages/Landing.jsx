@@ -16,6 +16,12 @@ const FEATURES = [
   { icon: Trophy, title: "Achievements & Streaks", desc: "Build the habit. Earn badges, keep your streak alive, and watch your footprint shrink.", span: "md:col-span-2", dark: false, accent: true },
 ];
 
+/**
+ * EcoTrace Landing Page.
+ * Displays hero section, platform features, statistics, and call-to-action buttons.
+ * Uses Framer Motion for premium scroll and entrance animations.
+ * @returns {JSX.Element} The rendered Landing page.
+ */
 export default function Landing() {
   return (
     <div className="min-h-screen bg-[#F9F8F6] text-[#1A2E20]">

@@ -51,6 +51,12 @@ function getStreak() {
   }
 }
 
+/**
+ * EcoTrace Achievements Page.
+ * Displays the user's daily logging streak and badge achievements.
+ * Reads logged activities and dates from localStorage to compute unlocked badges.
+ * @returns {JSX.Element} The rendered Achievements page.
+ */
 export default function Achievements() {
   const streak = useMemo(() => getStreak(), []);
   const earned_count = BADGES.filter(b => b.earned).length;

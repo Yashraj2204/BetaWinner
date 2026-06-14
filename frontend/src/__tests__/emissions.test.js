@@ -27,8 +27,8 @@ describe("EMISSION_FACTORS — structure", () => {
   });
 
   test("every activity entry has required fields: label, factor, unit, source", () => {
-    Object.entries(EMISSION_FACTORS).forEach(([cat, types]) => {
-      Object.entries(types).forEach(([key, entry]) => {
+    Object.entries(EMISSION_FACTORS).forEach(([_cat, types]) => {
+      Object.entries(types).forEach(([_key, entry]) => {
         expect(entry).toHaveProperty("label");
         expect(entry).toHaveProperty("factor");
         expect(entry).toHaveProperty("unit");

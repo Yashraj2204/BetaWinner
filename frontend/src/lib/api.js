@@ -8,9 +8,16 @@
 export { EMISSION_FACTORS, GLOBAL_WEEKLY_AVG_KG, CO2_PER_TREE_PER_YEAR_KG, CALC_INPUT } from "./constants";
 
 /**
- * Format a FastAPI / generic error detail value into a human-readable string.
- * @param {unknown} detail
- * @returns {string}
+ * Converts a FastAPI / generic API error detail value into a human-readable string.
+ * Handles all four shapes the backend may return: null, string, array, or object.
+ *
+ * @param {null | undefined | string | Array<{msg: string}> | {msg: string} | unknown} detail
+ *   The raw error detail from an API response body.
+ * @returns {string} A non-empty, user-facing error message. Never throws.
+ * @example
+ *   formatApiErrorDetail(null)          // "Something went wrong. Please try again."
+ *   formatApiErrorDetail("Bad input")   // "Bad input"
+ *   formatApiErrorDetail([{msg:"X"}])   // "X"
  */
 export function formatApiErrorDetail(detail) {
   if (detail === null || detail === undefined) return "Something went wrong. Please try again.";

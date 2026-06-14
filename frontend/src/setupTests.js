@@ -18,7 +18,6 @@ global.TextDecoder = TextDecoder;
  * Not available in jsdom.
  */
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
   observe()    {}
   unobserve()  {}
   disconnect() {}
@@ -29,7 +28,6 @@ global.IntersectionObserver = class IntersectionObserver {
  * Not available in jsdom.
  */
 global.ResizeObserver = class ResizeObserver {
-  constructor() {}
   observe()    {}
   unobserve()  {}
   disconnect() {}
@@ -59,6 +57,7 @@ const SILENT_PATTERNS = [
   /Warning: ReactDOM.render/,
   /Warning: An update to/,
   /Not implemented: navigation/,
+  /A suspended resource finished loading/,
 ];
 
 const originalError = console.error.bind(console);
