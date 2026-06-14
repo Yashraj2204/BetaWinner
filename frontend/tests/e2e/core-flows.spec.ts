@@ -3,10 +3,16 @@ import { test, expect } from "@playwright/test";
 /**
  * Core E2E flow tests for EcoTrace.
  *
+ * Route map (from App.js):
+ *   /            → Landing
+ *   /dashboard   → Dashboard
+ *   /log         → Calculator  ← NOTE: route is /log, not /calculator
+ *   /achievements → Achievements
+ *
  * These tests cover the three most critical user journeys:
- *  1. Carbon-calculator → log an activity → verify dashboard update
- *  2. Achievements page loads and shows the heading
- *  3. Accessibility smoke-test: skip-to-content link is focusable
+ *  1. Carbon-calculator (/log) — page renders its form UI
+ *  2. Achievements page — loads and shows the h1 heading
+ *  3. Accessibility smoke — title, alt text, root mount
  */
 
 // ---------------------------------------------------------------------------
@@ -17,70 +23,79 @@ async function waitForAppShell(page: import("@playwright/test").Page) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Carbon-calculator flow
+// 1. Carbon-calculator flow  (route: /log)
 // ---------------------------------------------------------------------------
 test.describe("Carbon calculator flow", () => {
   test("calculator page is reachable and renders the form", async ({ page }) => {
-    await page.goto("/");
+    // Navigate directly to /log (the actual route in App.js)
+    await page.goto("/log");
     await waitForAppShell(page);
 
-    // Find the Calculator nav link (case-insensitive) and navigate to it
-    const calcLink = page.getByRole("link", { name: /calculator/i });
-    if (await calcLink.isVisible()) {
-      await calcLink.click();
-    } else {
-      // Fallback: navigate directly if the nav item uses a different label
-      await page.goto("/calculator");
-    }
+    // The URL must be /log
+    await expect(page).toHaveURL(/\/log/);
 
-    await page.waitForURL(/calculator/i, { timeout: 10_000 });
+    // The page must render at least one interactive form element
+    // Calculator renders category buttons + a quantity input
+    const hasInteractiveElement =
+      (await page.locator("button").count()) > 0 ||
+      (await page.locator("input").count()) > 0 ||
+      (await page.locator("select").count()) > 0;
 
-    // The page must render at minimum one form or select element
-    const hasForm =
-      (await page.locator("form").count()) > 0 ||
-      (await page.locator("select").count()) > 0 ||
-      (await page.locator("[role='combobox']").count()) > 0;
+    expect(hasInteractiveElement).toBe(true);
+  });
 
-    expect(hasForm).toBe(true);
+  test("calculator page has a visible heading", async ({ page }) => {
+    await page.goto("/log");
+    await waitForAppShell(page);
+
+    // Must have at least one heading rendered
+    const heading = page.getByRole("heading").first();
+    await expect(heading).toBeVisible({ timeout: 10_000 });
   });
 
   test("dashboard page is reachable", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/dashboard");
     await waitForAppShell(page);
 
-    const dashLink = page.getByRole("link", { name: /dashboard/i });
-    if (await dashLink.isVisible()) {
-      await dashLink.click();
-      await page.waitForURL(/dashboard/i, { timeout: 10_000 });
-    } else {
-      await page.goto("/dashboard");
-    }
+    await expect(page).toHaveURL(/\/dashboard/);
 
     // Dashboard must have at least one heading
     const heading = page.getByRole("heading").first();
-    await expect(heading).toBeVisible();
+    await expect(heading).toBeVisible({ timeout: 10_000 });
   });
 });
 
 // ---------------------------------------------------------------------------
-// 2. Achievements flow
+// 2. Achievements flow  (route: /achievements)
 // ---------------------------------------------------------------------------
 test.describe("Achievements flow", () => {
-  test("achievements page loads and shows heading", async ({ page }) => {
-    await page.goto("/");
+  test("achievements page loads and shows the page heading", async ({ page }) => {
+    await page.goto("/achievements");
     await waitForAppShell(page);
 
-    const achLink = page.getByRole("link", { name: /achievements/i });
-    if (await achLink.isVisible()) {
-      await achLink.click();
-      await page.waitForURL(/achievements/i, { timeout: 10_000 });
-    } else {
-      await page.goto("/achievements");
-    }
+    await expect(page).toHaveURL(/\/achievements/);
 
-    // Page must render a visible heading related to achievements
-    const heading = page.getByRole("heading", { name: /achievements/i });
-    await expect(heading).toBeVisible({ timeout: 10_000 });
+    // The Achievements page h1 reads "Your eco journey" (see Achievements.jsx line 138-140).
+    // We match it by role=heading rather than by text so the test is resilient to copy changes.
+    const h1 = page.getByRole("heading", { level: 1 });
+    await expect(h1).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("achievements page shows the streak card", async ({ page }) => {
+    await page.goto("/achievements");
+    await waitForAppShell(page);
+
+    // data-testid="streak-card" is present in Achievements.jsx line 146
+    await expect(page.getByTestId("streak-card")).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("achievements page shows the badge grid", async ({ page }) => {
+    await page.goto("/achievements");
+    await waitForAppShell(page);
+
+    // At least one badge card should be rendered
+    const firstBadge = page.getByTestId("badge-first-step");
+    await expect(firstBadge).toBeVisible({ timeout: 10_000 });
   });
 });
 
@@ -92,7 +107,7 @@ test.describe("Accessibility smoke", () => {
     await page.goto("/");
     await waitForAppShell(page);
 
-    // Title should be non-empty and contain a product keyword
+    // Title should be non-empty and contain an EcoTrace keyword
     const title = await page.title();
     expect(title.length).toBeGreaterThan(0);
     expect(title.toLowerCase()).toMatch(/eco|carbon|track/i);
@@ -102,11 +117,11 @@ test.describe("Accessibility smoke", () => {
     await page.goto("/");
     await waitForAppShell(page);
 
-    // Grab all <img> elements and assert none are missing alt text
+    // All <img> elements must have an alt attribute (empty string is ok for decorative images)
     const images = await page.locator("img").all();
     for (const img of images) {
       const alt = await img.getAttribute("alt");
-      // alt="" is acceptable for decorative images; only null is a violation
+      // null means the attribute is missing entirely — that is a violation
       expect(alt).not.toBeNull();
     }
   });
