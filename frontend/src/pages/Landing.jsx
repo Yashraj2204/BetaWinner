@@ -143,7 +143,7 @@ export default function Landing() {
             className="relative hidden md:block"
           >
             <img
-              src="https://images.unsplash.com/photo-1761495375895-4d99be6a0f19?crop=entropy&cs=srgb&fm=jpg&q=85&w=900"
+              src="/hero.webp"
               alt="Forest canopy"
               className="rounded-2xl object-cover w-full h-[480px] border border-[#E5E2DA]"
             />

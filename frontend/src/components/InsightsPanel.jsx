@@ -91,8 +91,7 @@ export const InsightsPanel = () => {
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1524207874394-5ec7c8c8e1a6?crop=entropy&cs=srgb&fm=jpg&q=60&w=800)",
+          backgroundImage: "url(/dashboard_bg.webp)",
         }}
         aria-hidden="true"
         role="presentation"

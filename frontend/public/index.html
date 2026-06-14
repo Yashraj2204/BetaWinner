@@ -17,26 +17,33 @@
     <meta property="og:title"       content="EcoTrace — Carbon Footprint Tracker" />
     <meta property="og:description" content="Track your daily CO₂ emissions, get personalized reduction tips and build lasting climate-positive habits." />
     <meta property="og:url"         content="https://beta-winner.vercel.app" />
-    <meta property="og:image"       content="https://images.unsplash.com/photo-1761495375895-4d99be6a0f19?w=1200&q=80" />
+    <meta property="og:image"       content="/hero.webp" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="EcoTrace — Carbon Footprint Tracker" />
     <meta name="twitter:description" content="Track your daily CO₂ emissions, get personalized reduction tips and build lasting climate-positive habits." />
-    <meta name="twitter:image"       content="https://images.unsplash.com/photo-1761495375895-4d99be6a0f19?w=1200&q=80" />
+    <meta name="twitter:image"       content="/hero.webp" />
 
     <!-- Fonts — preconnect first for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.fontshare.com" />
     <link
       href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800,900&display=swap"
       rel="stylesheet"
+      integrity="sha256-XwFC8MGzCzoWGcIA2oodA1RF0DFxsaPvkFNuVndxOeY="
+      crossorigin="anonymous"
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      integrity="sha256-kUIFnOvHgpQM8B/h6/2PjPjg2WtclGqxIplJCVtWewM="
+      crossorigin="anonymous"
     />
+
+    <!-- Hashed inline CSS for noscript styles (CSP compliance) -->
+    <style>.noscript-warning{font-family:sans-serif;padding:2rem;text-align:center}</style>
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -57,7 +64,7 @@
   </head>
   <body>
     <noscript>
-      <p style="font-family:sans-serif;padding:2rem;text-align:center">
+      <p class="noscript-warning">
         EcoTrace requires JavaScript to run.
         Please enable JavaScript in your browser settings.
       </p>

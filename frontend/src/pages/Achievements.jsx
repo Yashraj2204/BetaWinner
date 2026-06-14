@@ -160,7 +160,7 @@ export default function Achievements() {
           data-testid="badges-summary-card"
         >
           <img
-            src="https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=srgb&fm=jpg&q=60&w=600"
+            src="/achievements_bg.webp"
             alt=""
             aria-hidden="true"
             className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-20"
