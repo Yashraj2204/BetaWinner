@@ -1,17 +1,24 @@
 import { useState, useCallback, useMemo, memo } from "react";
 import { Link } from "react-router-dom";
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
-import {
-  Flame, CalendarDays, Activity, Globe2, Trash2, PlusCircle, TreePine,
-} from "lucide-react";
+import { Flame, CalendarDays, Activity, Globe2, Trash2, PlusCircle, TreePine } from "lucide-react";
 import { toast } from "sonner";
 import PropTypes from "prop-types";
 import {
-  CHART_COLORS, CAT_LABELS,
-  GLOBAL_WEEKLY_AVG_KG, CO2_PER_TREE_PER_YEAR_KG,
+  CHART_COLORS,
+  CAT_LABELS,
+  GLOBAL_WEEKLY_AVG_KG,
+  CO2_PER_TREE_PER_YEAR_KG,
 } from "../lib/constants";
 import { InsightsPanel } from "../components/InsightsPanel";
 
@@ -21,12 +28,12 @@ import { InsightsPanel } from "../components/InsightsPanel";
 const TREND_DAYS = 14;
 
 const TREND_DATA = (() => {
-  const seed = [6.2,4.8,9.1,5.3,7.7,3.9,8.4,6.0,4.5,10.2,5.8,7.1,4.2,6.9];
+  const seed = [6.2, 4.8, 9.1, 5.3, 7.7, 3.9, 8.4, 6.0, 4.5, 10.2, 5.8, 7.1, 4.2, 6.9];
   const today = new Date();
   return seed.map((kg, i) => {
     const d = new Date(today);
     d.setDate(today.getDate() - (TREND_DAYS - 1 - i));
-    return { label: d.toLocaleDateString("en",{month:"short",day:"numeric"}), kg };
+    return { label: d.toLocaleDateString("en", { month: "short", day: "numeric" }), kg };
   });
 })();
 
@@ -34,11 +41,51 @@ const TREND_DATA = (() => {
 const MONTH_WEEKS = 4.2;
 
 const INITIAL_ACTIVITIES = [
-  { id: "1", label: "Car (Petrol) — 25 km",  date: new Date().toISOString().slice(0, 10), value: 25,  unit: "km",   co2_kg: 5.25, category: "transport" },
-  { id: "2", label: "Electricity — 4 kWh",   date: new Date().toISOString().slice(0, 10), value: 4,   unit: "kWh",  co2_kg: 0.93, category: "energy"    },
-  { id: "3", label: "Beef — 0.3 kg",         date: new Date().toISOString().slice(0, 10), value: 0.3, unit: "kg",   co2_kg: 8.10, category: "food"      },
-  { id: "4", label: "Bus — 10 km",           date: new Date().toISOString().slice(0, 10), value: 10,  unit: "km",   co2_kg: 0.89, category: "transport" },
-  { id: "5", label: "Vegetarian Meal",        date: new Date().toISOString().slice(0, 10), value: 1,   unit: "meal", co2_kg: 1.50, category: "food"      },
+  {
+    id: "1",
+    label: "Car (Petrol) — 25 km",
+    date: new Date().toISOString().slice(0, 10),
+    value: 25,
+    unit: "km",
+    co2_kg: 5.25,
+    category: "transport",
+  },
+  {
+    id: "2",
+    label: "Electricity — 4 kWh",
+    date: new Date().toISOString().slice(0, 10),
+    value: 4,
+    unit: "kWh",
+    co2_kg: 0.93,
+    category: "energy",
+  },
+  {
+    id: "3",
+    label: "Beef — 0.3 kg",
+    date: new Date().toISOString().slice(0, 10),
+    value: 0.3,
+    unit: "kg",
+    co2_kg: 8.1,
+    category: "food",
+  },
+  {
+    id: "4",
+    label: "Bus — 10 km",
+    date: new Date().toISOString().slice(0, 10),
+    value: 10,
+    unit: "km",
+    co2_kg: 0.89,
+    category: "transport",
+  },
+  {
+    id: "5",
+    label: "Vegetarian Meal",
+    date: new Date().toISOString().slice(0, 10),
+    value: 1,
+    unit: "meal",
+    co2_kg: 1.5,
+    category: "food",
+  },
 ];
 
 /**
@@ -103,30 +150,33 @@ function recordActivityDate(dateStr) {
  *             category_breakdown: Array<{category: string, kg: number}> }}
  */
 function buildStats(activities) {
-  const today     = new Date().toISOString().slice(0, 10);
-  const todayKg   = +activities.filter(a => a.date === today).reduce((s, a) => s + a.co2_kg, 0).toFixed(1);
-  const weekKg    = +activities.reduce((s, a) => s + a.co2_kg, 0).toFixed(1);
-  const monthKg   = +(weekKg * MONTH_WEEKS).toFixed(1);
-  const vsGlobal  = +((weekKg / GLOBAL_WEEKLY_AVG_KG) * 100).toFixed(0);
-  const trees     = Math.max(1, Math.ceil(monthKg / CO2_PER_TREE_PER_YEAR_KG));
+  const today = new Date().toISOString().slice(0, 10);
+  const todayKg = +activities
+    .filter((a) => a.date === today)
+    .reduce((s, a) => s + a.co2_kg, 0)
+    .toFixed(1);
+  const weekKg = +activities.reduce((s, a) => s + a.co2_kg, 0).toFixed(1);
+  const monthKg = +(weekKg * MONTH_WEEKS).toFixed(1);
+  const vsGlobal = +((weekKg / GLOBAL_WEEKLY_AVG_KG) * 100).toFixed(0);
+  const trees = Math.max(1, Math.ceil(monthKg / CO2_PER_TREE_PER_YEAR_KG));
 
   // Record all activity dates for streak calculation
-  activities.forEach(a => recordActivityDate(a.date));
+  activities.forEach((a) => recordActivityDate(a.date));
   const streak = getStreak();
 
   const catMap = {};
-  activities.forEach(a => {
-    catMap[a.category] = +(((catMap[a.category] || 0) + a.co2_kg).toFixed(2));
+  activities.forEach((a) => {
+    catMap[a.category] = +((catMap[a.category] || 0) + a.co2_kg).toFixed(2);
   });
 
   return {
-    today_kg:              todayKg,
-    week_kg:               weekKg,
-    month_kg:              monthKg,
-    vs_global_pct:         vsGlobal,
+    today_kg: todayKg,
+    week_kg: weekKg,
+    month_kg: monthKg,
+    vs_global_pct: vsGlobal,
     streak,
     trees_to_offset_month: trees,
-    category_breakdown:    Object.entries(catMap).map(([cat, kg]) => ({ category: cat, kg })),
+    category_breakdown: Object.entries(catMap).map(([cat, kg]) => ({ category: cat, kg })),
   };
 }
 
@@ -144,7 +194,10 @@ const StatTile = memo(function StatTile({ label, value, sub, icon: Icon, accent,
     >
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs tracking-[0.15em] uppercase text-[#4A5A50] font-semibold">{label}</p>
-        <Icon className={`w-4 h-4 ${accent ? "text-[#E06D53]" : "text-[#8BA888]"}`} aria-hidden="true" />
+        <Icon
+          className={`w-4 h-4 ${accent ? "text-[#E06D53]" : "text-[#8BA888]"}`}
+          aria-hidden="true"
+        />
       </div>
       <p className="font-heading text-3xl font-extrabold text-[#1A2E20]">{value}</p>
       {sub && <p className="text-xs text-[#4A5A50] mt-1">{sub}</p>}
@@ -153,12 +206,12 @@ const StatTile = memo(function StatTile({ label, value, sub, icon: Icon, accent,
 });
 
 StatTile.propTypes = {
-  label:   PropTypes.string.isRequired,
-  value:   PropTypes.string.isRequired,
-  sub:     PropTypes.string,
-  icon:    PropTypes.elementType.isRequired,
-  accent:  PropTypes.bool,
-  testId:  PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  sub: PropTypes.string,
+  icon: PropTypes.elementType.isRequired,
+  accent: PropTypes.bool,
+  testId: PropTypes.string.isRequired,
 };
 
 // ─── main page ──────────────────────────────────────────────────────────────
@@ -170,15 +223,19 @@ export default function Dashboard() {
     return saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
   });
 
-  const data    = useMemo(() => buildStats(activities), [activities]);
+  const data = useMemo(() => buildStats(activities), [activities]);
   const pieData = useMemo(
-    () => data.category_breakdown.map(c => ({ name: CAT_LABELS[c.category] || c.category, value: c.kg })),
-    [data.category_breakdown],
+    () =>
+      data.category_breakdown.map((c) => ({
+        name: CAT_LABELS[c.category] || c.category,
+        value: c.kg,
+      })),
+    [data.category_breakdown]
   );
 
   const deleteActivity = useCallback((id) => {
-    setActivities(prev => {
-      const updated = prev.filter(a => a.id !== id);
+    setActivities((prev) => {
+      const updated = prev.filter((a) => a.id !== id);
       localStorage.setItem("ecotrace_activities", JSON.stringify(updated));
       return updated;
     });
@@ -187,7 +244,6 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto" data-testid="dashboard-page">
-
       {/* Page header */}
       <header className="flex items-end justify-between mb-8 flex-wrap gap-4">
         <div>
@@ -214,8 +270,8 @@ export default function Dashboard() {
         <Globe2 className="w-5 h-5 text-[#2D5A3F] shrink-0" aria-hidden="true" />
         <p className="text-sm text-[#2D5A3F]">
           The global average is <strong>~{GLOBAL_WEEKLY_AVG_KG} kg CO₂ / person / week.</strong>{" "}
-          Your logged week total is <strong>{data.week_kg} kg</strong>{" "}
-          ({data.vs_global_pct}% of the global average).{" "}
+          Your logged week total is <strong>{data.week_kg} kg</strong> ({data.vs_global_pct}% of the
+          global average).{" "}
           {data.vs_global_pct < 100
             ? "🎉 You're below the global average — keep it up!"
             : "🌱 There's room to improve — check the tips below."}
@@ -224,15 +280,43 @@ export default function Dashboard() {
 
       {/* KPI tiles */}
       <section aria-label="Key metrics" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatTile label="Today"      value={`${data.today_kg} kg`}  sub="CO₂ emitted today"                         icon={Activity} testId="stat-today" />
-        <StatTile label="This week"  value={`${data.week_kg} kg`}   sub={`${data.vs_global_pct}% of global avg`}    icon={Globe2}   testId="stat-week" />
-        <StatTile label="Streak"     value={`${data.streak} days`}  sub="consecutive logging"                       icon={Flame}    accent testId="stat-streak" />
-        <StatTile label="30-day est" value={`${data.month_kg} kg`}  sub={`≈ ${data.trees_to_offset_month} trees to offset`} icon={TreePine} testId="stat-month" />
+        <StatTile
+          label="Today"
+          value={`${data.today_kg} kg`}
+          sub="CO₂ emitted today"
+          icon={Activity}
+          testId="stat-today"
+        />
+        <StatTile
+          label="This week"
+          value={`${data.week_kg} kg`}
+          sub={`${data.vs_global_pct}% of global avg`}
+          icon={Globe2}
+          testId="stat-week"
+        />
+        <StatTile
+          label="Streak"
+          value={`${data.streak} days`}
+          sub="consecutive logging"
+          icon={Flame}
+          accent
+          testId="stat-streak"
+        />
+        <StatTile
+          label="30-day est"
+          value={`${data.month_kg} kg`}
+          sub={`≈ ${data.trees_to_offset_month} trees to offset`}
+          icon={TreePine}
+          testId="stat-month"
+        />
       </section>
 
       {/* Charts */}
       <section aria-label="Emission charts" className="grid lg:grid-cols-3 gap-6 mb-6">
-        <div className="lg:col-span-2 bg-white border border-[#E5E2DA] rounded-lg p-6" data-testid="trend-chart">
+        <div
+          className="lg:col-span-2 bg-white border border-[#E5E2DA] rounded-lg p-6"
+          data-testid="trend-chart"
+        >
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-heading font-bold text-[#1A2E20]">14-day emission trend</h2>
             <span className="text-xs text-[#4A5A50]">kg CO₂ / day</span>
@@ -242,37 +326,70 @@ export default function Dashboard() {
               <AreaChart data={TREND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%"   stopColor="#8BA888" stopOpacity={0.4} />
+                    <stop offset="0%" stopColor="#8BA888" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="#8BA888" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} interval={2} />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 11, fill: "#4A5A50" }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={2}
+                />
                 <YAxis tick={{ fontSize: 11, fill: "#4A5A50" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }}
                   formatter={(v) => [`${v} kg CO₂`, "Emissions"]}
                 />
-                <Area type="monotone" dataKey="kg" stroke="#2D5A3F" strokeWidth={2} fill="url(#trendFill)" animationDuration={900} />
+                <Area
+                  type="monotone"
+                  dataKey="kg"
+                  stroke="#2D5A3F"
+                  strokeWidth={2}
+                  fill="url(#trendFill)"
+                  animationDuration={900}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white border border-[#E5E2DA] rounded-lg p-6" data-testid="category-breakdown-chart">
+        <div
+          className="bg-white border border-[#E5E2DA] rounded-lg p-6"
+          data-testid="category-breakdown-chart"
+        >
           <h2 className="font-heading font-bold text-[#1A2E20] mb-5">
             By category <span className="text-xs font-normal text-[#4A5A50]">(all logged)</span>
           </h2>
           {pieData.length ? (
             <>
-              <div role="img" aria-label="Category breakdown donut chart showing emissions by transport, energy, food and shopping">
+              <div
+                role="img"
+                aria-label="Category breakdown donut chart showing emissions by transport, energy, food and shopping"
+              >
                 <ResponsiveContainer width="100%" height={170}>
                   <PieChart>
-                    <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={75} paddingAngle={3} animationDuration={800}>
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      innerRadius={50}
+                      outerRadius={75}
+                      paddingAngle={3}
+                      animationDuration={800}
+                    >
                       {pieData.map((entry, i) => (
-                        <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
+                        <Cell
+                          key={entry.name}
+                          fill={CHART_COLORS[i % CHART_COLORS.length]}
+                          stroke="none"
+                        />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }} formatter={(v) => [`${v} kg CO₂`]} />
+                    <Tooltip
+                      contentStyle={{ borderRadius: 8, border: "1px solid #E5E2DA", fontSize: 13 }}
+                      formatter={(v) => [`${v} kg CO₂`]}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -280,7 +397,11 @@ export default function Dashboard() {
                 {pieData.map((p, i) => (
                   <li key={p.name} className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-[#4A5A50]">
-                      <span className="w-2.5 h-2.5 rounded-sm" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} aria-hidden="true" />
+                      <span
+                        className="w-2.5 h-2.5 rounded-sm"
+                        style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
+                        aria-hidden="true"
+                      />
                       {p.name}
                     </span>
                     <span className="font-semibold text-[#1A2E20]">{p.value} kg</span>
@@ -289,7 +410,9 @@ export default function Dashboard() {
               </ul>
             </>
           ) : (
-            <p className="text-sm text-[#4A5A50] py-12 text-center">No data yet. Log your first activity!</p>
+            <p className="text-sm text-[#4A5A50] py-12 text-center">
+              No data yet. Log your first activity!
+            </p>
           )}
         </div>
       </section>
@@ -298,7 +421,10 @@ export default function Dashboard() {
       <section aria-label="Insights and recent activity" className="grid lg:grid-cols-2 gap-6">
         <InsightsPanel />
 
-        <div className="bg-white border border-[#E5E2DA] rounded-lg p-6" data-testid="recent-activities">
+        <div
+          className="bg-white border border-[#E5E2DA] rounded-lg p-6"
+          data-testid="recent-activities"
+        >
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-heading font-bold text-[#1A2E20]">Recent activity</h2>
             <CalendarDays className="w-4 h-4 text-[#8BA888]" aria-hidden="true" />
@@ -313,10 +439,14 @@ export default function Dashboard() {
                 >
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[#1A2E20] truncate">{a.label}</p>
-                    <p className="text-xs text-[#4A5A50]">{a.date} · {a.value} {a.unit}</p>
+                    <p className="text-xs text-[#4A5A50]">
+                      {a.date} · {a.value} {a.unit}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-semibold text-[#1A2E20]">{a.co2_kg.toFixed(1)} kg</span>
+                    <span className="text-sm font-semibold text-[#1A2E20]">
+                      {a.co2_kg.toFixed(1)} kg
+                    </span>
                     <button
                       onClick={() => deleteActivity(a.id)}
                       data-testid={`delete-activity-${a.id}`}
@@ -330,7 +460,9 @@ export default function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-[#4A5A50] py-10 text-center" role="status">Nothing logged yet.</p>
+            <p className="text-sm text-[#4A5A50] py-10 text-center" role="status">
+              Nothing logged yet.
+            </p>
           )}
         </div>
       </section>

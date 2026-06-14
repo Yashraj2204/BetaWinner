@@ -29,7 +29,9 @@ export class ErrorBoundary extends Component {
           aria-live="assertive"
           className="min-h-screen flex flex-col items-center justify-center bg-[#F9F8F6] px-6 text-center"
         >
-          <span className="text-5xl mb-4" aria-hidden="true">🌿</span>
+          <span className="text-5xl mb-4" aria-hidden="true">
+            🌿
+          </span>
           <h1 className="font-heading text-2xl font-extrabold text-[#1A2E20] mb-2">
             Something went wrong
           </h1>

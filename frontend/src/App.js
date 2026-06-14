@@ -5,9 +5,9 @@ import { Toaster } from "sonner";
 import { Layout } from "./components/Layout";
 
 // Route-level code-splitting keeps the initial JS bundle small.
-const Landing      = lazy(() => import("./pages/Landing"));
-const Dashboard    = lazy(() => import("./pages/Dashboard"));
-const Calculator   = lazy(() => import("./pages/Calculator"));
+const Landing = lazy(() => import("./pages/Landing"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Calculator = lazy(() => import("./pages/Calculator"));
 const Achievements = lazy(() => import("./pages/Achievements"));
 
 /** Full-screen loading spinner shown while a lazy route chunk is loading. */
@@ -34,12 +34,33 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/"             element={<Landing />} />
-          <Route path="/dashboard"    element={<Layout><Dashboard /></Layout>} />
-          <Route path="/log"          element={<Layout><Calculator /></Layout>} />
-          <Route path="/achievements" element={<Layout><Achievements /></Layout>} />
+          <Route path="/" element={<Landing />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Layout>
+                <Dashboard />
+              </Layout>
+            }
+          />
+          <Route
+            path="/log"
+            element={
+              <Layout>
+                <Calculator />
+              </Layout>
+            }
+          />
+          <Route
+            path="/achievements"
+            element={
+              <Layout>
+                <Achievements />
+              </Layout>
+            }
+          />
           {/* Redirect any unknown URL to the landing page */}
-          <Route path="*"             element={<Landing />} />
+          <Route path="*" element={<Landing />} />
         </Routes>
       </Suspense>
       <Toaster position="top-right" richColors closeButton />

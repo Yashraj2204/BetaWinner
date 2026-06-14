@@ -1,23 +1,93 @@
 import { useMemo } from "react";
 import {
-  Footprints, Sprout, BarChart3, Flame, Calendar, Trophy, Compass, Feather, Lightbulb, Lock,
+  Footprints,
+  Sprout,
+  BarChart3,
+  Flame,
+  Calendar,
+  Trophy,
+  Compass,
+  Feather,
+  Lightbulb,
+  Lock,
 } from "lucide-react";
 
 const ICONS = {
-  footprints: Footprints, sprout: Sprout, "bar-chart": BarChart3, flame: Flame,
-  calendar: Calendar, trophy: Trophy, compass: Compass, feather: Feather, lightbulb: Lightbulb,
+  footprints: Footprints,
+  sprout: Sprout,
+  "bar-chart": BarChart3,
+  flame: Flame,
+  calendar: Calendar,
+  trophy: Trophy,
+  compass: Compass,
+  feather: Feather,
+  lightbulb: Lightbulb,
 };
 
 const BADGES = [
-  { id: "first-step",   name: "First Step",      desc: "Log your very first activity.",                      icon: "footprints",  earned: true  },
-  { id: "green-week",   name: "Green Week",       desc: "Log an activity every day for 7 days.",              icon: "calendar",    earned: true  },
-  { id: "low-carbon",   name: "Low Carbon Day",   desc: "Keep your daily footprint under 5 kg CO₂.",          icon: "sprout",      earned: true  },
-  { id: "streak-10",    name: "10-Day Streak",    desc: "Log every day for 10 consecutive days.",             icon: "flame",       earned: false },
-  { id: "data-nerd",    name: "Data Nerd",        desc: "Log 50+ activities in total.",                       icon: "bar-chart",   earned: false },
-  { id: "eco-explorer", name: "Eco Explorer",     desc: "Log activities in all 4 categories.",                icon: "compass",     earned: false },
-  { id: "light-touch",  name: "Light Touch",      desc: "Log a week under 30 kg CO₂ total.",                 icon: "feather",     earned: false },
-  { id: "ai-insight",   name: "Insight Seeker",   desc: "Generate your first AI insight.",                    icon: "lightbulb",   earned: false },
-  { id: "champion",     name: "EcoChampion",      desc: "Earn all other badges.",                             icon: "trophy",      earned: false },
+  {
+    id: "first-step",
+    name: "First Step",
+    desc: "Log your very first activity.",
+    icon: "footprints",
+    earned: true,
+  },
+  {
+    id: "green-week",
+    name: "Green Week",
+    desc: "Log an activity every day for 7 days.",
+    icon: "calendar",
+    earned: true,
+  },
+  {
+    id: "low-carbon",
+    name: "Low Carbon Day",
+    desc: "Keep your daily footprint under 5 kg CO₂.",
+    icon: "sprout",
+    earned: true,
+  },
+  {
+    id: "streak-10",
+    name: "10-Day Streak",
+    desc: "Log every day for 10 consecutive days.",
+    icon: "flame",
+    earned: false,
+  },
+  {
+    id: "data-nerd",
+    name: "Data Nerd",
+    desc: "Log 50+ activities in total.",
+    icon: "bar-chart",
+    earned: false,
+  },
+  {
+    id: "eco-explorer",
+    name: "Eco Explorer",
+    desc: "Log activities in all 4 categories.",
+    icon: "compass",
+    earned: false,
+  },
+  {
+    id: "light-touch",
+    name: "Light Touch",
+    desc: "Log a week under 30 kg CO₂ total.",
+    icon: "feather",
+    earned: false,
+  },
+  {
+    id: "ai-insight",
+    name: "Insight Seeker",
+    desc: "Generate your first AI insight.",
+    icon: "lightbulb",
+    earned: false,
+  },
+  {
+    id: "champion",
+    name: "EcoChampion",
+    desc: "Earn all other badges.",
+    icon: "trophy",
+    earned: false,
+  },
 ];
 
 /**
@@ -59,7 +129,7 @@ function getStreak() {
  */
 export default function Achievements() {
   const streak = useMemo(() => getStreak(), []);
-  const earned_count = BADGES.filter(b => b.earned).length;
+  const earned_count = BADGES.filter((b) => b.earned).length;
   const total = BADGES.length;
 
   return (
@@ -71,16 +141,24 @@ export default function Achievements() {
 
       {/* Streak hero */}
       <div className="grid sm:grid-cols-2 gap-6 mb-10">
-        <div className="rounded-xl bg-[#1A2E20] p-8 relative overflow-hidden" data-testid="streak-card">
+        <div
+          className="rounded-xl bg-[#1A2E20] p-8 relative overflow-hidden"
+          data-testid="streak-card"
+        >
           <Flame className="absolute -right-4 -bottom-4 w-32 h-32 text-[#E06D53]/20" />
           <p className="text-xs tracking-[0.2em] uppercase text-white/50 mb-2">Current streak</p>
           <p className="font-heading text-6xl font-extrabold text-white">
             {streak}
             <span className="text-xl font-medium text-white/60 ml-2">days</span>
           </p>
-          <p className="text-sm text-white/60 mt-3">Log at least one activity every day to keep it burning.</p>
+          <p className="text-sm text-white/60 mt-3">
+            Log at least one activity every day to keep it burning.
+          </p>
         </div>
-        <div className="rounded-xl bg-white border border-[#E5E2DA] p-8 relative overflow-hidden" data-testid="badges-summary-card">
+        <div
+          className="rounded-xl bg-white border border-[#E5E2DA] p-8 relative overflow-hidden"
+          data-testid="badges-summary-card"
+        >
           <img
             src="https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=srgb&fm=jpg&q=60&w=600"
             alt=""
@@ -138,4 +216,3 @@ export default function Achievements() {
     </div>
   );
 }
-

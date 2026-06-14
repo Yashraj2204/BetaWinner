@@ -5,7 +5,12 @@
  * Re-exports constants that were previously fetched from the backend so the
  * rest of the codebase can keep the same import paths.
  */
-export { EMISSION_FACTORS, GLOBAL_WEEKLY_AVG_KG, CO2_PER_TREE_PER_YEAR_KG, CALC_INPUT } from "./constants";
+export {
+  EMISSION_FACTORS,
+  GLOBAL_WEEKLY_AVG_KG,
+  CO2_PER_TREE_PER_YEAR_KG,
+  CALC_INPUT,
+} from "./constants";
 
 /**
  * Converts a FastAPI / generic API error detail value into a human-readable string.

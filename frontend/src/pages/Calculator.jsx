@@ -1,9 +1,30 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Car, Bus, TrainFront, Plane, Bike, Footprints, Zap, Flame, Droplet, Cylinder,
-  Beef, Drumstick, Fish, Ham, Milk, Salad, Leaf, Shirt, Smartphone, Armchair,
-  BookOpen, Package, ShoppingBasket, CheckCircle2,
+  Car,
+  Bus,
+  TrainFront,
+  Plane,
+  Bike,
+  Footprints,
+  Zap,
+  Flame,
+  Droplet,
+  Cylinder,
+  Beef,
+  Drumstick,
+  Fish,
+  Ham,
+  Milk,
+  Salad,
+  Leaf,
+  Shirt,
+  Smartphone,
+  Armchair,
+  BookOpen,
+  Package,
+  ShoppingBasket,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { EMISSION_FACTORS, CALC_INPUT } from "../lib/api";
@@ -11,20 +32,39 @@ import { EMISSION_FACTORS, CALC_INPUT } from "../lib/api";
 /** Maps category IDs to display labels + icons */
 const CATEGORIES = [
   { id: "transport", label: "Transport", icon: Car },
-  { id: "energy",    label: "Energy",    icon: Zap },
-  { id: "food",      label: "Food",      icon: Salad },
-  { id: "shopping",  label: "Shopping",  icon: ShoppingBasket },
+  { id: "energy", label: "Energy", icon: Zap },
+  { id: "food", label: "Food", icon: Salad },
+  { id: "shopping", label: "Shopping", icon: ShoppingBasket },
 ];
 
 /** Maps activity type keys to representative icon components */
 const TYPE_ICONS = {
-  car_petrol: Car, car_electric: Car, motorbike: Bike, bus: Bus, train: TrainFront,
-  flight: Plane, bicycle: Bike, walk: Footprints,
-  electricity: Zap, natural_gas: Flame, heating_oil: Droplet, lpg: Cylinder,
-  beef: Beef, lamb: Ham, pork: Ham, chicken: Drumstick, fish: Fish, dairy: Milk,
-  vegetarian: Salad, vegan: Leaf,
-  clothing: Shirt, electronics: Smartphone, furniture: Armchair, books: BookOpen,
-  plastic_goods: Package, groceries: ShoppingBasket,
+  car_petrol: Car,
+  car_electric: Car,
+  motorbike: Bike,
+  bus: Bus,
+  train: TrainFront,
+  flight: Plane,
+  bicycle: Bike,
+  walk: Footprints,
+  electricity: Zap,
+  natural_gas: Flame,
+  heating_oil: Droplet,
+  lpg: Cylinder,
+  beef: Beef,
+  lamb: Ham,
+  pork: Ham,
+  chicken: Drumstick,
+  fish: Fish,
+  dairy: Milk,
+  vegetarian: Salad,
+  vegan: Leaf,
+  clothing: Shirt,
+  electronics: Smartphone,
+  furniture: Armchair,
+  books: BookOpen,
+  plastic_goods: Package,
+  groceries: ShoppingBasket,
 };
 
 /**
@@ -34,10 +74,10 @@ const TYPE_ICONS = {
  */
 export default function Calculator() {
   const [category, setCategory] = useState("transport");
-  const [type,     setType]     = useState(null);
-  const [value,    setValue]    = useState("");
-  const [date,     setDate]     = useState(new Date().toISOString().slice(0, 10));
-  const [saving,   setSaving]   = useState(false);
+  const [type, setType] = useState(null);
+  const [value, setValue] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -51,10 +91,10 @@ export default function Calculator() {
     setValue("");
   }, []);
 
-  const info    = useMemo(() => type ? EMISSION_FACTORS[category][type] : null, [category, type]);
+  const info = useMemo(() => (type ? EMISSION_FACTORS[category][type] : null), [category, type]);
   const preview = useMemo(
-    () => (info && Number(value) > 0) ? (Number(value) * info.factor).toFixed(2) : null,
-    [info, value],
+    () => (info && Number(value) > 0 ? (Number(value) * info.factor).toFixed(2) : null),
+    [info, value]
   );
 
   /**
@@ -65,7 +105,10 @@ export default function Calculator() {
    */
   const handleValueChange = useCallback((e) => {
     const raw = e.target.value;
-    if (raw === "" || raw === "-") { setValue(""); return; }
+    if (raw === "" || raw === "-") {
+      setValue("");
+      return;
+    }
     const n = parseFloat(raw);
     if (!isNaN(n)) setValue(Math.min(Math.max(n, 0), CALC_INPUT.MAX).toString());
   }, []);
@@ -124,7 +167,8 @@ export default function Calculator() {
         Log an activity
       </h1>
       <p className="text-sm text-[#4A5A50] mb-8">
-        Emission factors from <strong>UK DEFRA/BEIS 2023</strong> and <strong>Poore &amp; Nemecek 2018</strong>.
+        Emission factors from <strong>UK DEFRA/BEIS 2023</strong> and{" "}
+        <strong>Poore &amp; Nemecek 2018</strong>.
       </p>
 
       {/* Category selection — fieldset for a11y grouping */}
@@ -159,7 +203,7 @@ export default function Calculator() {
         </legend>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {Object.entries(EMISSION_FACTORS[category]).map(([key, f]) => {
-            const Icon   = TYPE_ICONS[key] || Leaf;
+            const Icon = TYPE_ICONS[key] || Leaf;
             const active = type === key;
             return (
               <button
@@ -180,7 +224,10 @@ export default function Calculator() {
                     aria-hidden="true"
                   />
                 )}
-                <Icon className={`w-5 h-5 mb-3 ${active ? "text-[#2D5A3F]" : "text-[#8BA888]"}`} aria-hidden="true" />
+                <Icon
+                  className={`w-5 h-5 mb-3 ${active ? "text-[#2D5A3F]" : "text-[#8BA888]"}`}
+                  aria-hidden="true"
+                />
                 <p className="text-sm font-semibold text-[#1A2E20]">{f.label}</p>
                 <p className="text-xs text-[#4A5A50] mt-0.5">
                   {f.factor} kg / {f.unit}
@@ -195,7 +242,10 @@ export default function Calculator() {
       <div className="bg-white border border-[#E5E2DA] rounded-lg p-6">
         <div className="grid sm:grid-cols-3 gap-4 mb-5">
           <div className="sm:col-span-1">
-            <label htmlFor="activity-value" className="text-xs tracking-[0.15em] uppercase text-[#4A5A50] font-semibold">
+            <label
+              htmlFor="activity-value"
+              className="text-xs tracking-[0.15em] uppercase text-[#4A5A50] font-semibold"
+            >
               Amount {info ? `(${info.unit})` : ""}
             </label>
             <input
@@ -214,7 +264,10 @@ export default function Calculator() {
             />
           </div>
           <div className="sm:col-span-1">
-            <label htmlFor="activity-date" className="text-xs tracking-[0.15em] uppercase text-[#4A5A50] font-semibold">
+            <label
+              htmlFor="activity-date"
+              className="text-xs tracking-[0.15em] uppercase text-[#4A5A50] font-semibold"
+            >
               Date
             </label>
             <input
@@ -235,7 +288,10 @@ export default function Calculator() {
               aria-label="Estimated CO₂ impact"
             >
               <p className="text-xs text-[#4A5A50]">Estimated impact</p>
-              <p id="co2-preview-value" className="font-heading font-extrabold text-lg text-[#1A2E20]">
+              <p
+                id="co2-preview-value"
+                className="font-heading font-extrabold text-lg text-[#1A2E20]"
+              >
                 {preview ? `${preview} kg CO₂` : "—"}
               </p>
             </div>

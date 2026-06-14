@@ -11,15 +11,15 @@ import App from "../App";
 
 // Stub IntersectionObserver (not available in jsdom)
 global.IntersectionObserver = class {
-  observe()    {}
-  unobserve()  {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 };
 
 // Stub ResizeObserver used by Recharts
 global.ResizeObserver = class {
-  observe()    {}
-  unobserve()  {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 };
 
@@ -53,7 +53,7 @@ describe("ErrorBoundary", () => {
     render(
       <ErrorBoundary>
         <p>All good</p>
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByText("All good")).toBeInTheDocument();
   });
@@ -62,11 +62,13 @@ describe("ErrorBoundary", () => {
     // Suppress expected console.error from react
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    const Bomb = () => { throw new Error("Test crash"); };
+    const Bomb = () => {
+      throw new Error("Test crash");
+    };
     render(
       <ErrorBoundary>
         <Bomb />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /refresh/i })).toBeInTheDocument();

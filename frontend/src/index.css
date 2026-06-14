@@ -15,7 +15,11 @@ body {
   color: #1a2e20;
 }
 
-h1, h2, h3, h4, .font-heading {
+h1,
+h2,
+h3,
+h4,
+.font-heading {
   font-family: "Cabinet Grotesk", sans-serif;
 }
 
@@ -47,59 +51,85 @@ h1, h2, h3, h4, .font-heading {
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --background:           40  20%  97%;
-    --foreground:          138  28%  14%;
-    --card:                  0   0% 100%;
-    --card-foreground:     138  28%  14%;
-    --popover:               0   0% 100%;
-    --popover-foreground:  138  28%  14%;
-    --primary:             138  28%  14%;
-    --primary-foreground:    0   0%  98%;
-    --secondary:           113  16%  60%;
-    --secondary-foreground:138  28%  14%;
-    --muted:                40  18%  92%;
+    --background: 40 20% 97%;
+    --foreground: 138 28% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 138 28% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 138 28% 14%;
+    --primary: 138 28% 14%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 113 16% 60%;
+    --secondary-foreground: 138 28% 14%;
+    --muted: 40 18% 92%;
     /* darkened from #5C6B61 → #4A5A50 for WCAG AA compliance on #F9F8F6 */
-    --muted-foreground:    135  10%  32%;
-    --accent:               11  70%  60%;
-    --accent-foreground:     0   0% 100%;
-    --destructive:           0  84%  60%;
-    --destructive-foreground:0   0%  98%;
-    --border:               43  18%  87%;
-    --input:                43  18%  87%;
-    --ring:                113  16%  60%;
-    --chart-1:             138  28%  14%;
-    --chart-2:             113  16%  60%;
-    --chart-3:              11  70%  60%;
-    --chart-4:              36  64%  57%;
-    --chart-5:             137  10%  78%;
-    --radius:              0.5rem;
+    --muted-foreground: 135 10% 32%;
+    --accent: 11 70% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 43 18% 87%;
+    --input: 43 18% 87%;
+    --ring: 113 16% 60%;
+    --chart-1: 138 28% 14%;
+    --chart-2: 113 16% 60%;
+    --chart-3: 11 70% 60%;
+    --chart-4: 36 64% 57%;
+    --chart-5: 137 10% 78%;
+    --radius: 0.5rem;
   }
 }
 
 @layer base {
-  * { @apply border-border; }
-  body { @apply bg-background text-foreground; }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 /* ─── Emergent debug wrapper (harmless no-op in production) ───────────────── */
 @layer base {
-  [data-debug-wrapper="true"] { display: contents !important; }
+  [data-debug-wrapper="true"] {
+    display: contents !important;
+  }
   [data-debug-wrapper="true"] > * {
-    margin-left: inherit; margin-right: inherit; margin-top: inherit; margin-bottom: inherit;
-    padding-left: inherit; padding-right: inherit; padding-top: inherit; padding-bottom: inherit;
-    column-gap: inherit; row-gap: inherit; gap: inherit;
-    border-left-width: inherit; border-right-width: inherit;
-    border-top-width: inherit; border-bottom-width: inherit;
-    border-left-style: inherit; border-right-style: inherit;
-    border-top-style: inherit; border-bottom-style: inherit;
-    border-left-color: inherit; border-right-color: inherit;
-    border-top-color: inherit; border-bottom-color: inherit;
+    margin-left: inherit;
+    margin-right: inherit;
+    margin-top: inherit;
+    margin-bottom: inherit;
+    padding-left: inherit;
+    padding-right: inherit;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    column-gap: inherit;
+    row-gap: inherit;
+    gap: inherit;
+    border-left-width: inherit;
+    border-right-width: inherit;
+    border-top-width: inherit;
+    border-bottom-width: inherit;
+    border-left-style: inherit;
+    border-right-style: inherit;
+    border-top-style: inherit;
+    border-bottom-style: inherit;
+    border-left-color: inherit;
+    border-right-color: inherit;
+    border-top-color: inherit;
+    border-bottom-color: inherit;
   }
 }

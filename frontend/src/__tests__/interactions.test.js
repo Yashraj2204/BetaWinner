@@ -35,14 +35,12 @@ describe("Calculator — user interaction flow", () => {
     render(
       <MemoryRouter>
         <Calculator />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
   test("renders the calculator page heading", () => {
     renderCalc();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /log an activity/i,
-    );
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/log an activity/i);
   });
 
   test("category tabs are clickable and update the activity list", async () => {
@@ -152,9 +150,7 @@ describe("Achievements — badges and streak display", () => {
 
   test("renders the achievements page with correct heading", () => {
     render(<Achievements />);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /your eco journey/i,
-    );
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/your eco journey/i);
   });
 
   test("displays the streak card with days count", () => {
@@ -176,8 +172,15 @@ describe("Achievements — badges and streak display", () => {
   test("renders all 9 badges", () => {
     render(<Achievements />);
     const badges = [
-      "first-step", "green-week", "low-carbon", "streak-10",
-      "data-nerd", "eco-explorer", "light-touch", "ai-insight", "champion",
+      "first-step",
+      "green-week",
+      "low-carbon",
+      "streak-10",
+      "data-nerd",
+      "eco-explorer",
+      "light-touch",
+      "ai-insight",
+      "champion",
     ];
     badges.forEach((id) => {
       expect(screen.getByTestId(`badge-${id}`)).toBeInTheDocument();
@@ -214,7 +217,7 @@ describe("Dashboard — activity row interaction", () => {
     render(
       <MemoryRouter>
         <Dashboard />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
   test("renders dashboard page with key metrics", () => {

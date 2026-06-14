@@ -7,7 +7,12 @@
  *  - Numeric correctness of key factors against known DEFRA/BEIS values
  *  - CO₂ calculation math used throughout the app
  */
-import { EMISSION_FACTORS, GLOBAL_WEEKLY_AVG_KG, CO2_PER_TREE_PER_YEAR_KG, CALC_INPUT } from "../lib/constants";
+import {
+  EMISSION_FACTORS,
+  GLOBAL_WEEKLY_AVG_KG,
+  CO2_PER_TREE_PER_YEAR_KG,
+  CALC_INPUT,
+} from "../lib/constants";
 
 // ─── Structure tests ────────────────────────────────────────────────────────
 

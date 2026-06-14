@@ -6,8 +6,8 @@ import { Layout } from "../components/Layout";
 
 // Stub IntersectionObserver
 global.IntersectionObserver = class {
-  observe()    {}
-  unobserve()  {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 };
 

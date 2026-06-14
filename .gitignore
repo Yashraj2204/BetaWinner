@@ -63,3 +63,6 @@ yarn-error.log*
 .cache/
 frontend/node_modules/.cache/
 memory/test_credentials.md
+
+# Agent testing artefacts
+test_result.md

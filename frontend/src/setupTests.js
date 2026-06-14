@@ -18,8 +18,8 @@ global.TextDecoder = TextDecoder;
  * Not available in jsdom.
  */
 global.IntersectionObserver = class IntersectionObserver {
-  observe()    {}
-  unobserve()  {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 };
 
@@ -28,8 +28,8 @@ global.IntersectionObserver = class IntersectionObserver {
  * Not available in jsdom.
  */
 global.ResizeObserver = class ResizeObserver {
-  observe()    {}
-  unobserve()  {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 };
 
@@ -43,9 +43,9 @@ Object.defineProperty(window, "matchMedia", {
     matches: false,
     media: query,
     onchange: null,
-    addListener:    () => {},
+    addListener: () => {},
     removeListener: () => {},
-    addEventListener:    () => {},
+    addEventListener: () => {},
     removeEventListener: () => {},
     dispatchEvent: () => false,
   }),
@@ -60,9 +60,13 @@ const SILENT_PATTERNS = [
   /A suspended resource finished loading/,
 ];
 
+/* eslint-disable no-console */
 const originalError = console.error.bind(console);
 console.error = (...args) => {
+  /* eslint-enable no-console */
   const msg = typeof args[0] === "string" ? args[0] : "";
-  if (SILENT_PATTERNS.some((p) => p.test(msg))) { return; }
+  if (SILENT_PATTERNS.some((p) => p.test(msg))) {
+    return;
+  }
   originalError(...args);
 };

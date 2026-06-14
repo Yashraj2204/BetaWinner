@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 
 /** @type {Array<{to: string, label: string, icon: React.ElementType, testId: string}>} */
 const NAV = [
-  { to: "/dashboard",    label: "Dashboard",    icon: LayoutDashboard, testId: "nav-dashboard" },
-  { to: "/log",          label: "Log Activity", icon: PlusCircle,      testId: "nav-log-activity" },
-  { to: "/achievements", label: "Achievements", icon: Trophy,          testId: "nav-achievements" },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, testId: "nav-dashboard" },
+  { to: "/log", label: "Log Activity", icon: PlusCircle, testId: "nav-log-activity" },
+  { to: "/achievements", label: "Achievements", icon: Trophy, testId: "nav-achievements" },
 ];
 
 /**
@@ -37,10 +37,15 @@ export const Layout = ({ children }) => {
           data-testid="sidebar-logo"
           aria-label="EcoTrace home"
         >
-          <span className="w-8 h-8 rounded-lg bg-[#1A2E20] flex items-center justify-center" aria-hidden="true">
+          <span
+            className="w-8 h-8 rounded-lg bg-[#1A2E20] flex items-center justify-center"
+            aria-hidden="true"
+          >
             <Leaf className="w-4 h-4 text-[#8BA888]" />
           </span>
-          <span className="font-heading font-extrabold text-lg tracking-tight text-[#1A2E20]">EcoTrace</span>
+          <span className="font-heading font-extrabold text-lg tracking-tight text-[#1A2E20]">
+            EcoTrace
+          </span>
         </Link>
 
         <nav className="flex-1 px-3 py-6 space-y-1" aria-label="Main navigation">
@@ -67,7 +72,9 @@ export const Layout = ({ children }) => {
 
         <div className="px-6 py-4 border-t border-[#E5E2DA]">
           <p className="text-xs text-[#4A5A50]">No account needed</p>
-          <p className="text-xs text-[#8BA888] font-semibold mt-0.5">Free to use · Open source data</p>
+          <p className="text-xs text-[#8BA888] font-semibold mt-0.5">
+            Free to use · Open source data
+          </p>
         </div>
       </aside>
 
@@ -76,8 +83,15 @@ export const Layout = ({ children }) => {
         className="md:hidden fixed top-0 inset-x-0 z-40 bg-white border-b border-[#E5E2DA] flex items-center px-4 h-14"
         role="banner"
       >
-        <Link to="/" className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#8BA888] rounded" aria-label="EcoTrace home">
-          <span className="w-7 h-7 rounded-lg bg-[#1A2E20] flex items-center justify-center" aria-hidden="true">
+        <Link
+          to="/"
+          className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#8BA888] rounded"
+          aria-label="EcoTrace home"
+        >
+          <span
+            className="w-7 h-7 rounded-lg bg-[#1A2E20] flex items-center justify-center"
+            aria-hidden="true"
+          >
             <Leaf className="w-3.5 h-3.5 text-[#8BA888]" />
           </span>
           <span className="font-heading font-extrabold text-[#1A2E20]">EcoTrace</span>
@@ -109,11 +123,7 @@ export const Layout = ({ children }) => {
       </nav>
 
       {/* ── Page content ─────────────────────────────────────── */}
-      <main
-        id="main-content"
-        className="flex-1 md:ml-60 pt-14 md:pt-0 pb-20 md:pb-0"
-        tabIndex={-1}
-      >
+      <main id="main-content" className="flex-1 md:ml-60 pt-14 md:pt-0 pb-20 md:pb-0" tabIndex={-1}>
         {children}
       </main>
     </div>
